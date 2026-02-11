@@ -32,55 +32,59 @@ object AstronomicalCalculator {
     fun calculateNodeFactor(constituent: Constituents.Constituent, time: Instant): Double {
         val astronomicalArgs = getAstronomicalArguments(time)
 
+        // Convert N and xi from degrees to radians for cos() calculations
+        val N_rad = toRadians(astronomicalArgs.N)
+        val xi_rad = toRadians(astronomicalArgs.xi)
+
         return when (constituent.name) {
             // Principal semidiurnal
-            "M2" -> 1.0 - 0.037 * cos(2.0 * (astronomicalArgs.N - astronomicalArgs.xi))
+            "M2" -> 1.0 - 0.037 * cos(2.0 * (N_rad - xi_rad))
             "S2" -> 1.0 // Solar constituents have no lunar node factor
-            "N2" -> 1.0 - 0.037 * cos(2.0 * (astronomicalArgs.N - astronomicalArgs.xi))
-            "K2" -> 1.024 + 0.286 * cos(astronomicalArgs.N) + 0.008 * cos(2.0 * astronomicalArgs.N)
+            "N2" -> 1.0 - 0.037 * cos(2.0 * (N_rad - xi_rad))
+            "K2" -> 1.024 + 0.286 * cos(N_rad) + 0.008 * cos(2.0 * N_rad)
 
             // Principal diurnal
-            "K1" -> 1.006 + 0.115 * cos(astronomicalArgs.N) - 0.009 * cos(2.0 * astronomicalArgs.N)
-            "O1" -> 1.009 + 0.187 * cos(astronomicalArgs.N) - 0.015 * cos(2.0 * astronomicalArgs.N)
+            "K1" -> 1.006 + 0.115 * cos(N_rad) - 0.009 * cos(2.0 * N_rad)
+            "O1" -> 1.009 + 0.187 * cos(N_rad) - 0.015 * cos(2.0 * N_rad)
             "P1" -> 1.0 // Solar
-            "Q1" -> 1.009 + 0.187 * cos(astronomicalArgs.N) - 0.015 * cos(2.0 * astronomicalArgs.N)
+            "Q1" -> 1.009 + 0.187 * cos(N_rad) - 0.015 * cos(2.0 * N_rad)
 
             // Long period
-            "Mm" -> 1.0 - 0.130 * cos(astronomicalArgs.N)
-            "Mf" -> 1.043 + 0.414 * cos(astronomicalArgs.N)
+            "Mm" -> 1.0 - 0.130 * cos(N_rad)
+            "Mf" -> 1.043 + 0.414 * cos(N_rad)
             "Ssa", "Sa" -> 1.0 // Solar
 
             // Additional semidiurnal
-            "2N2" -> 1.0 - 0.037 * cos(2.0 * (astronomicalArgs.N - astronomicalArgs.xi))
+            "2N2" -> 1.0 - 0.037 * cos(2.0 * (N_rad - xi_rad))
             "μ2" -> 1.0
-            "ν2" -> 1.0 - 0.037 * cos(2.0 * (astronomicalArgs.N - astronomicalArgs.xi))
+            "ν2" -> 1.0 - 0.037 * cos(2.0 * (N_rad - xi_rad))
             "λ2" -> 1.0
-            "L2" -> 1.0 - 0.037 * cos(2.0 * (astronomicalArgs.N - astronomicalArgs.xi))
+            "L2" -> 1.0 - 0.037 * cos(2.0 * (N_rad - xi_rad))
             "T2", "R2" -> 1.0 // Solar
 
             // Additional diurnal
-            "2Q1" -> 1.009 + 0.187 * cos(astronomicalArgs.N) - 0.015 * cos(2.0 * astronomicalArgs.N)
-            "σ1" -> 1.009 + 0.187 * cos(astronomicalArgs.N) - 0.015 * cos(2.0 * astronomicalArgs.N)
-            "ρ1" -> 1.009 + 0.187 * cos(astronomicalArgs.N) - 0.015 * cos(2.0 * astronomicalArgs.N)
-            "M1" -> 1.043 + 0.414 * cos(astronomicalArgs.N)
-            "J1" -> 1.006 + 0.115 * cos(astronomicalArgs.N) - 0.009 * cos(2.0 * astronomicalArgs.N)
-            "OO1" -> 1.009 + 0.187 * cos(astronomicalArgs.N) - 0.015 * cos(2.0 * astronomicalArgs.N)
+            "2Q1" -> 1.009 + 0.187 * cos(N_rad) - 0.015 * cos(2.0 * N_rad)
+            "σ1" -> 1.009 + 0.187 * cos(N_rad) - 0.015 * cos(2.0 * N_rad)
+            "ρ1" -> 1.009 + 0.187 * cos(N_rad) - 0.015 * cos(2.0 * N_rad)
+            "M1" -> 1.043 + 0.414 * cos(N_rad)
+            "J1" -> 1.006 + 0.115 * cos(N_rad) - 0.009 * cos(2.0 * N_rad)
+            "OO1" -> 1.009 + 0.187 * cos(N_rad) - 0.015 * cos(2.0 * N_rad)
 
             // Shallow water constituents (compound)
-            "M4" -> (1.0 - 0.037 * cos(2.0 * (astronomicalArgs.N - astronomicalArgs.xi))).pow(2.0)
-            "MS4" -> (1.0 - 0.037 * cos(2.0 * (astronomicalArgs.N - astronomicalArgs.xi))) * 1.0
-            "M6" -> (1.0 - 0.037 * cos(2.0 * (astronomicalArgs.N - astronomicalArgs.xi))).pow(3.0)
-            "M8" -> (1.0 - 0.037 * cos(2.0 * (astronomicalArgs.N - astronomicalArgs.xi))).pow(4.0)
-            "MK3" -> (1.0 - 0.037 * cos(2.0 * (astronomicalArgs.N - astronomicalArgs.xi))) *
-                     (1.006 + 0.115 * cos(astronomicalArgs.N) - 0.009 * cos(2.0 * astronomicalArgs.N))
+            "M4" -> (1.0 - 0.037 * cos(2.0 * (N_rad - xi_rad))).pow(2.0)
+            "MS4" -> (1.0 - 0.037 * cos(2.0 * (N_rad - xi_rad))) * 1.0
+            "M6" -> (1.0 - 0.037 * cos(2.0 * (N_rad - xi_rad))).pow(3.0)
+            "M8" -> (1.0 - 0.037 * cos(2.0 * (N_rad - xi_rad))).pow(4.0)
+            "MK3" -> (1.0 - 0.037 * cos(2.0 * (N_rad - xi_rad))) *
+                     (1.006 + 0.115 * cos(N_rad) - 0.009 * cos(2.0 * N_rad))
             "S4", "S6" -> 1.0 // Solar
-            "MN4" -> (1.0 - 0.037 * cos(2.0 * (astronomicalArgs.N - astronomicalArgs.xi))) *
-                     (1.0 - 0.037 * cos(2.0 * (astronomicalArgs.N - astronomicalArgs.xi)))
+            "MN4" -> (1.0 - 0.037 * cos(2.0 * (N_rad - xi_rad))) *
+                     (1.0 - 0.037 * cos(2.0 * (N_rad - xi_rad)))
             "2SM2" -> 1.0
-            "2MK3" -> (1.0 - 0.037 * cos(2.0 * (astronomicalArgs.N - astronomicalArgs.xi))).pow(2.0) *
-                      (1.006 + 0.115 * cos(astronomicalArgs.N) - 0.009 * cos(2.0 * astronomicalArgs.N))
+            "2MK3" -> (1.0 - 0.037 * cos(2.0 * (N_rad - xi_rad))).pow(2.0) *
+                      (1.006 + 0.115 * cos(N_rad) - 0.009 * cos(2.0 * N_rad))
             "MSf" -> 1.0
-            "MO3" -> (1.0 - 0.037 * cos(2.0 * (astronomicalArgs.N - astronomicalArgs.xi))).pow(2.0)
+            "MO3" -> (1.0 - 0.037 * cos(2.0 * (N_rad - xi_rad))).pow(2.0)
             "S1" -> 1.0 // Solar
 
             else -> 1.0 // Default for unknown constituents
@@ -178,9 +182,9 @@ object AstronomicalCalculator {
             s = normalizeAngle(s),
             h = normalizeAngle(h),
             p = normalizeAngle(p),
-            N = toRadians(normalizeAngle(N)),
+            N = normalizeAngle(N),  // Keep in degrees for Doodson formula
             p1 = normalizeAngle(p1),
-            xi = toRadians(normalizeAngle(xi))
+            xi = normalizeAngle(xi)  // Keep in degrees for consistency
         )
     }
 

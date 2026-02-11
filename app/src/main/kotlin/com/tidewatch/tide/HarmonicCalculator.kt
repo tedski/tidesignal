@@ -67,6 +67,14 @@ class HarmonicCalculator(
         // Calculate hours since reference epoch
         val hoursSinceEpoch = Duration.between(REFERENCE_EPOCH, time).seconds / 3600.0
 
+        // Debug logging for specific discontinuity times
+        val debugTime = time.epochSecond in 1770853800L..1770854600L
+        if (debugTime) {
+            android.util.Log.d("HarmonicCalc", "=== Calculating height for time=$time (${time.epochSecond}) ===")
+            android.util.Log.d("HarmonicCalc", "Hours since epoch: $hoursSinceEpoch")
+            android.util.Log.d("HarmonicCalc", "Constituent count: ${stationConstituents.size}")
+        }
+
         // Sum all constituent contributions
         var height = 0.0
 
@@ -87,7 +95,16 @@ class HarmonicCalculator(
             val argument = toRadians(omega * hoursSinceEpoch + phase - equilibriumArg)
             val contribution = amplitude * nodeFactor * cos(argument)
 
+            if (debugTime) {
+                android.util.Log.d("HarmonicCalc", "${constituent.constituentName}: amp=$amplitude, phase=$phase, " +
+                    "omega=$omega, nodeFactor=$nodeFactor, eqArg=$equilibriumArg, argument=${Math.toDegrees(argument)}, contribution=$contribution")
+            }
+
             height += contribution
+        }
+
+        if (debugTime) {
+            android.util.Log.d("HarmonicCalc", "Total height: $height")
         }
 
         return height
