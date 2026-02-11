@@ -26,11 +26,20 @@ import kotlin.math.roundToInt
  * - Next high/low cards
  * - Mini 24-hour graph (clickable for detail)
  *
- * Auto-refreshes current height every minute.
+ * Auto-refreshes current height:
+ * - Every 1 minute in active mode
+ * - Every 15 minutes in ambient (AOD) mode for battery optimization
+ *
+ * @param viewModel The TideViewModel
+ * @param isAmbient Whether the device is in ambient (AOD) mode
+ * @param onNavigateToStationPicker Callback to navigate to station picker
+ * @param onNavigateToDetail Callback to navigate to detail screen
+ * @param onNavigateToSettings Callback to navigate to settings
  */
 @Composable
 fun TideMainScreen(
     viewModel: TideViewModel,
+    isAmbient: Boolean = false,
     onNavigateToStationPicker: () -> Unit,
     onNavigateToDetail: () -> Unit,
     onNavigateToSettings: () -> Unit
@@ -51,6 +60,7 @@ fun TideMainScreen(
             SuccessScreen(
                 state = currentState,
                 useMetric = useMetric,
+                isAmbient = isAmbient,
                 onStationClick = onNavigateToStationPicker,
                 onGraphClick = onNavigateToDetail,
                 onSettingsClick = onNavigateToSettings,
@@ -135,15 +145,20 @@ private fun ErrorScreen(message: String, onRetry: () -> Unit) {
 private fun SuccessScreen(
     state: TideViewModel.TideUiState.Success,
     useMetric: Boolean,
+    isAmbient: Boolean,
     onStationClick: () -> Unit,
     onGraphClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onRefresh: () -> Unit
 ) {
-    // Auto-refresh every minute
-    LaunchedEffect(Unit) {
+    // Auto-refresh based on ambient mode:
+    // - Active mode: 1 minute (60,000 ms)
+    // - Ambient mode: 15 minutes (900,000 ms) for battery optimization
+    val refreshInterval = if (isAmbient) 900_000L else 60_000L
+
+    LaunchedEffect(isAmbient) {
         while (true) {
-            delay(60_000) // 1 minute
+            delay(refreshInterval)
             onRefresh()
         }
     }
@@ -159,7 +174,7 @@ private fun SuccessScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Station name (clickable)
+        // Station name (clickable in active mode only)
         item {
             Text(
                 text = state.station.name,
@@ -167,7 +182,13 @@ private fun SuccessScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(onClick = onStationClick)
+                    .then(
+                        if (!isAmbient) {
+                            Modifier.clickable(onClick = onStationClick)
+                        } else {
+                            Modifier
+                        }
+                    )
                     .padding(vertical = 8.dp)
             )
         }
@@ -213,12 +234,18 @@ private fun SuccessScreen(
             }
         }
 
-        // Mini 24-hour graph (clickable)
+        // Mini 24-hour graph (clickable in active mode only)
         item {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(onClick = onGraphClick)
+                    .then(
+                        if (!isAmbient) {
+                            Modifier.clickable(onClick = onGraphClick)
+                        } else {
+                            Modifier
+                        }
+                    )
                     .padding(vertical = 8.dp)
             ) {
                 Text(
@@ -235,14 +262,16 @@ private fun SuccessScreen(
             }
         }
 
-        // Settings button
-        item {
-            Chip(
-                onClick = onSettingsClick,
-                label = { Text("Settings") },
-                colors = ChipDefaults.secondaryChipColors(),
-                modifier = Modifier.fillMaxWidth()
-            )
+        // Settings button (hidden in ambient mode)
+        if (!isAmbient) {
+            item {
+                Chip(
+                    onClick = onSettingsClick,
+                    label = { Text("Settings") },
+                    colors = ChipDefaults.secondaryChipColors(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }

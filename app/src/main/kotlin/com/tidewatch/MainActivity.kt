@@ -5,9 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
+import androidx.wear.ambient.AmbientModeSupport
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
@@ -25,8 +27,12 @@ import com.tidewatch.ui.theme.TideWatchTheme
  * Main activity for TideWatch app.
  *
  * Sets up navigation and initializes the ViewModel.
+ * Supports Always-On Display (ambient mode) for battery optimization.
  */
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), AmbientModeSupport.AmbientCallbackProvider {
+
+    private lateinit var ambientController: AmbientModeSupport.AmbientController
+    private val isAmbient = mutableStateOf(false)
 
     private val viewModel: TideViewModel by viewModels {
         val app = application as TideWatchApplication
@@ -41,19 +47,49 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Initialize ambient mode support
+        ambientController = AmbientModeSupport.attach(this)
+
         setContent {
-            TideWatchTheme {
-                TideWatchApp(viewModel = viewModel)
+            TideWatchTheme(isAmbient = isAmbient.value) {
+                TideWatchApp(
+                    viewModel = viewModel,
+                    isAmbient = isAmbient.value
+                )
             }
         }
     }
+
+    override fun getAmbientCallback(): AmbientModeSupport.AmbientCallback =
+        object : AmbientModeSupport.AmbientCallback() {
+            override fun onEnterAmbient(ambientDetails: Bundle?) {
+                super.onEnterAmbient(ambientDetails)
+                isAmbient.value = true
+            }
+
+            override fun onExitAmbient() {
+                super.onExitAmbient()
+                isAmbient.value = false
+            }
+
+            override fun onUpdateAmbient() {
+                super.onUpdateAmbient()
+                // Called when ambient display needs to be updated
+            }
+        }
 }
 
 /**
  * Main app navigation setup.
+ *
+ * @param viewModel The shared TideViewModel
+ * @param isAmbient Whether the device is in ambient (AOD) mode
  */
 @Composable
-fun TideWatchApp(viewModel: TideViewModel) {
+fun TideWatchApp(
+    viewModel: TideViewModel,
+    isAmbient: Boolean
+) {
     val navController = rememberSwipeDismissableNavController()
 
     SwipeDismissableNavHost(
@@ -63,6 +99,7 @@ fun TideWatchApp(viewModel: TideViewModel) {
         composable(Routes.MAIN) {
             TideMainScreen(
                 viewModel = viewModel,
+                isAmbient = isAmbient,
                 onNavigateToStationPicker = {
                     navController.navigate(Routes.STATION_PICKER)
                 },
