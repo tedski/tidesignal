@@ -1,5 +1,6 @@
 package com.tidewatch.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,6 +53,15 @@ fun TideGraph(
 
         if (timeRange == 0.0) return@Canvas // Avoid division by zero
 
+        // Debug logging
+        Log.d("TideGraph", "Data points: ${tideData.size}")
+        Log.d("TideGraph", "Height range: $minHeight to $maxHeight (range: $heightRange)")
+        Log.d("TideGraph", "Time range: $startTime to $endTime (range: $timeRange seconds)")
+        Log.d("TideGraph", "Canvas size: ${width}x${height}")
+        tideData.take(5).forEachIndexed { i, data ->
+            Log.d("TideGraph", "Point $i: time=${data.time.epochSecond}, height=${data.height}")
+        }
+
         // Calculate points using time-based x-positioning
         val points = tideData.map { tide ->
             // Calculate x position based on time (not index)
@@ -65,12 +75,32 @@ fun TideGraph(
             Offset(x, y)
         }
 
-        // Draw tide curve
+        // Draw tide curve with smooth cubic Bezier interpolation
         if (points.size >= 2) {
             val path = Path().apply {
                 moveTo(points[0].x, points[0].y)
-                for (i in 1 until points.size) {
-                    lineTo(points[i].x, points[i].y)
+
+                // Use cubic Bezier curves for smooth tidal curve
+                for (i in 0 until points.size - 1) {
+                    val current = points[i]
+                    val next = points[i + 1]
+
+                    // Calculate control points for smooth cubic curve
+                    // Use 1/3 distance for tension control
+                    val tension = 0.3f
+                    val deltaX = next.x - current.x
+
+                    val control1X = current.x + deltaX * tension
+                    val control1Y = current.y
+
+                    val control2X = next.x - deltaX * tension
+                    val control2Y = next.y
+
+                    cubicTo(
+                        control1X, control1Y,
+                        control2X, control2Y,
+                        next.x, next.y
+                    )
                 }
             }
 
