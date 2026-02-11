@@ -105,6 +105,15 @@ object AstronomicalCalculator {
         val args = getAstronomicalArguments(time)
         val doodson = constituent.doodsonNumbers
 
+        // Debug logging for specific discontinuity times
+        val debugTime = time.epochSecond in 1770853800L..1770855400L
+        if (debugTime && constituent.name == "M2") {
+            android.util.Log.d("AstroCalc", "=== M2 Equilibrium Arg for time=${time.epochSecond} ===")
+            android.util.Log.d("AstroCalc", "T=${args.T}, s=${args.s}, h=${args.h}")
+            android.util.Log.d("AstroCalc", "p=${args.p}, N=${args.N}, p1=${args.p1}")
+            android.util.Log.d("AstroCalc", "Doodson: ${doodson.joinToString()}")
+        }
+
         // Calculate V + u using Doodson numbers
         // Formula: V + u = τ*T + s*s + h*h + p*p + N'*N + p'*p'
         val vPlusU = doodson[0] * args.T +
@@ -114,6 +123,11 @@ object AstronomicalCalculator {
                      doodson[4] * args.N +
                      doodson[5] * args.p1
 
+        if (debugTime && constituent.name == "M2") {
+            android.util.Log.d("AstroCalc", "vPlusU before normalize: $vPlusU")
+            android.util.Log.d("AstroCalc", "vPlusU after normalize: ${normalizeAngle(vPlusU)}")
+        }
+
         // Normalize to 0-360 degrees
         return normalizeAngle(vPlusU)
     }
@@ -122,7 +136,7 @@ object AstronomicalCalculator {
      * Astronomical arguments (angles) in degrees.
      */
     private data class AstronomicalArguments(
-        val T: Double,   // Mean lunar time (hour angle of mean moon)
+        val T: Double,   // Mean lunar time (hour angle of mean moon) - NOT normalized to allow continuity
         val s: Double,   // Mean longitude of moon
         val h: Double,   // Mean longitude of sun
         val p: Double,   // Longitude of moon's perigee
@@ -147,9 +161,10 @@ object AstronomicalCalculator {
         val T = daysSinceJ2000 / 36525.0 // Julian centuries
 
         // Mean lunar time (hour angle) - degrees
-        val tau = 15.0 * (time.atZone(ZoneOffset.UTC).hour +
-                         time.atZone(ZoneOffset.UTC).minute / 60.0 +
-                         time.atZone(ZoneOffset.UTC).second / 3600.0)
+        // CRITICAL: Use continuous hours since J2000, do NOT wrap/normalize here
+        // to avoid midnight discontinuity. Only normalize the final equilibrium argument.
+        val totalHoursSinceJ2000 = daysSinceJ2000 * 24.0
+        val tau = 15.0 * totalHoursSinceJ2000
 
         // Mean longitude of moon - degrees
         val s = 218.3164477 + 481267.88123421 * T -
@@ -178,7 +193,7 @@ object AstronomicalCalculator {
         val xi = N
 
         return AstronomicalArguments(
-            T = normalizeAngle(tau),
+            T = tau,  // Do NOT normalize - must maintain continuity across day boundaries
             s = normalizeAngle(s),
             h = normalizeAngle(h),
             p = normalizeAngle(p),

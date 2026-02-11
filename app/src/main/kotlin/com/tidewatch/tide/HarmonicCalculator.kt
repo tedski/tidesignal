@@ -68,10 +68,13 @@ class HarmonicCalculator(
         val hoursSinceEpoch = Duration.between(REFERENCE_EPOCH, time).seconds / 3600.0
 
         // Debug logging for specific discontinuity times
-        val debugTime = time.epochSecond in 1770853800L..1770854600L
+        // Points 19 and 20 from logs: 1770854114 (23:55) and 1770854714 (00:05)
+        val debugTime = time.epochSecond in 1770853800L..1770855400L
         if (debugTime) {
+            val formatter = java.time.format.DateTimeFormatter.ISO_INSTANT
             android.util.Log.d("HarmonicCalc", "=== Calculating height for time=$time (${time.epochSecond}) ===")
-            android.util.Log.d("HarmonicCalc", "Hours since epoch: $hoursSinceEpoch")
+            android.util.Log.d("HarmonicCalc", "ISO Time: ${formatter.format(time)}")
+            android.util.Log.d("HarmonicCalc", "Hours since epoch (1983-01-01): $hoursSinceEpoch")
             android.util.Log.d("HarmonicCalc", "Constituent count: ${stationConstituents.size}")
         }
 

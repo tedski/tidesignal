@@ -29,7 +29,32 @@
       "Bash(~/Library/Android/sdk/platform-tools/adb pull /sdcard/tidewatch_screenshot.png /tmp/tidewatch_screenshot.png)",
       "Skill(keybindings-help)",
       "Bash(find:*)",
-      "Bash(git -C /Users/tedski/src/tidewatch diff HEAD~1 -- app/src/main/kotlin/com/tidewatch/ui/app/TideMainScreen.kt)"
+      "Bash(git -C /Users/tedski/src/tidewatch diff HEAD~1 -- app/src/main/kotlin/com/tidewatch/ui/app/TideMainScreen.kt)",
+      "Bash(export JAVA_HOME=/opt/homebrew/opt/java)",
+      "Bash(brew list:*)",
+      "Bash(~/Library/Android/sdk/platform-tools/adb logcat -d -s TideWatch:* com.tidewatch:*)",
+      "Bash(~/Library/Android/sdk/platform-tools/adb logcat -c)",
+      "Bash(~/Library/Android/sdk/platform-tools/adb shell screencap -p /sdcard/tidewatch_current.png)",
+      "Bash(~/Library/Android/sdk/platform-tools/adb pull:*)",
+      "Bash(~/Library/Android/sdk/platform-tools/adb shell screencap:*)",
+      "Bash(~/Library/Android/sdk/platform-tools/adb shell input tap 350 68)",
+      "Bash(~/Library/Android/sdk/platform-tools/adb shell input swipe:*)",
+      "Bash(~/Library/Android/sdk/platform-tools/adb shell input tap 213 280)",
+      "Bash(~/Library/Android/sdk/platform-tools/adb logcat -d -s TideGraph:D)",
+      "Bash(__NEW_LINE_f3e872b63a0766d5__ ~/Library/Android/sdk/platform-tools/adb shell am start -n com.tidewatch/.MainActivity)",
+      "Bash(__NEW_LINE_f3e872b63a0766d5__ ~/Library/Android/sdk/platform-tools/adb shell input tap 350 68)",
+      "Bash(__NEW_LINE_f3e872b63a0766d5__ ~/Library/Android/sdk/platform-tools/adb shell input tap 213 280)",
+      "Bash(__NEW_LINE_f3e872b63a0766d5__ ~/Library/Android/sdk/platform-tools/adb logcat -d)",
+      "Bash(awk:*)",
+      "Bash(~/Library/Android/sdk/platform-tools/adb shell pm uninstall com.tidewatch)",
+      "Bash(~/Library/Android/sdk/platform-tools/adb shell input tap 213 235)",
+      "Bash(adb logcat:*)",
+      "Bash(/Users/tedski/Library/Android/sdk/platform-tools/adb logcat -d)",
+      "Bash(/Users/tedski/Library/Android/sdk/platform-tools/adb logcat -c)",
+      "Bash(/Users/tedski/Library/Android/sdk/platform-tools/adb shell input tap 227 362)",
+      "Bash(/Users/tedski/Library/Android/sdk/platform-tools/adb shell input keyevent KEYCODE_HOME)",
+      "Bash(/Users/tedski/Library/Android/sdk/platform-tools/adb shell monkey -p com.tidewatch -c android.intent.category.LAUNCHER 1)",
+      "Bash(/Users/tedski/Library/Android/sdk/platform-tools/adb exec-out screencap -p)"
     ]
   }
 }
