@@ -56,7 +56,11 @@
       "Bash(/Users/tedski/Library/Android/sdk/platform-tools/adb shell monkey -p com.tidewatch -c android.intent.category.LAUNCHER 1)",
       "Bash(/Users/tedski/Library/Android/sdk/platform-tools/adb exec-out screencap -p)",
       "Bash(/Users/tedski/Library/Android/sdk/platform-tools/adb shell:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(git checkout:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }

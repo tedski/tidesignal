@@ -49,6 +49,12 @@ class HarmonicCalculator(
     }
 
     /**
+     * Cache of V0 (equilibrium argument at reference epoch) for each constituent.
+     * Calculated once per constituent and reused to avoid midnight discontinuities.
+     */
+    private val v0Cache = mutableMapOf<String, Double>()
+
+    /**
      * Calculate the tide height at a specific time for a station.
      *
      * @param stationId Station identifier
@@ -85,22 +91,29 @@ class HarmonicCalculator(
             val constituentDef = Constituents.getConstituent(constituent.constituentName)
                 ?: continue // Skip unknown constituents
 
-            // Get node factor and equilibrium argument
-            val nodeFactor = AstronomicalCalculator.calculateNodeFactor(constituentDef, time)
-            val equilibriumArg = AstronomicalCalculator.calculateEquilibriumArgument(constituentDef, time)
+            // Get or calculate V0 (equilibrium argument at reference epoch) - calculated once and cached
+            val v0 = v0Cache.getOrPut(constituent.constituentName) {
+                AstronomicalCalculator.calculateEquilibriumArgument(constituentDef, REFERENCE_EPOCH)
+            }
 
-            // Calculate constituent contribution
-            // h = A × f × cos(ω × t + φ - κ)
+            // Get nodal corrections for current time
+            val nodeFactor = AstronomicalCalculator.calculateNodeFactor(constituentDef, time)
+            // TODO: Implement proper nodal phase (u) calculation
+            // For now, u ≈ 0 is a reasonable approximation (small, slowly varying)
+            val nodalPhase = 0.0
+
+            // Calculate constituent contribution using pytides approach
+            // h = A × f × cos(ω × t + (V0 + u) - φ)
             val omega = constituentDef.speed // degrees per hour
             val phase = constituent.phaseLocal // degrees
             val amplitude = constituent.amplitude // feet or meters
 
-            val argument = toRadians(omega * hoursSinceEpoch + phase - equilibriumArg)
+            val argument = toRadians(omega * hoursSinceEpoch + (v0 + nodalPhase) - phase)
             val contribution = amplitude * nodeFactor * cos(argument)
 
             if (debugTime) {
                 android.util.Log.d("HarmonicCalc", "${constituent.constituentName}: amp=$amplitude, phase=$phase, " +
-                    "omega=$omega, nodeFactor=$nodeFactor, eqArg=$equilibriumArg, argument=${Math.toDegrees(argument)}, contribution=$contribution")
+                    "omega=$omega, nodeFactor=$nodeFactor, v0=$v0, u=$nodalPhase, argument=${Math.toDegrees(argument)}, contribution=$contribution")
             }
 
             height += contribution
