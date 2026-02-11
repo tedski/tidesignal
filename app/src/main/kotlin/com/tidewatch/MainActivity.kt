@@ -1,9 +1,9 @@
 package com.tidewatch
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.fragment.app.FragmentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -29,7 +29,7 @@ import com.tidewatch.ui.theme.TideWatchTheme
  * Sets up navigation and initializes the ViewModel.
  * Supports Always-On Display (ambient mode) for battery optimization.
  */
-class MainActivity : ComponentActivity(), AmbientModeSupport.AmbientCallbackProvider {
+class MainActivity : FragmentActivity(), AmbientModeSupport.AmbientCallbackProvider {
 
     private lateinit var ambientController: AmbientModeSupport.AmbientController
     private val isAmbient = mutableStateOf(false)
