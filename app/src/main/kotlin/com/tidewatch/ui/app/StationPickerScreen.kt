@@ -2,6 +2,7 @@ package com.tidewatch.ui.app
 
 import android.Manifest
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -137,6 +138,9 @@ private fun NearbyMode(
     }
 
     if (!hasLocationPermission) {
+        // Handle back press to return to start screen
+        BackHandler(onBack = onBackClick)
+
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -233,6 +237,9 @@ private fun BrowseMode(
     var selectedState by remember { mutableStateOf<String?>(null) }
 
     if (selectedState == null) {
+        // Handle back press to return to start screen
+        BackHandler(onBack = onBackClick)
+
         // Show state list
         ScalingLazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -272,6 +279,9 @@ private fun BrowseMode(
             }
         }
     } else {
+        // Handle back press to return to state list
+        BackHandler(onBack = { selectedState = null })
+
         // Show stations for selected state
         if (browseStations.isEmpty()) {
             Box(
