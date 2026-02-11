@@ -36,75 +36,83 @@ fun StationPickerScreen(
     viewModel: TideViewModel,
     onStationSelected: () -> Unit
 ) {
-    var mode by remember { mutableStateOf(PickerMode.NEARBY) }
+    var currentScreen by remember { mutableStateOf<PickerScreen>(PickerScreen.Start) }
 
     Scaffold(
         timeText = { TimeText() }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 8.dp)
-        ) {
-            // Mode selector
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Chip(
-                    onClick = { mode = PickerMode.NEARBY },
-                    label = { Text("Nearby") },
-                    colors = if (mode == PickerMode.NEARBY) {
-                        ChipDefaults.primaryChipColors()
-                    } else {
-                        ChipDefaults.secondaryChipColors()
-                    },
-                    modifier = Modifier.weight(1f)
-                )
-                Chip(
-                    onClick = { mode = PickerMode.BROWSE },
-                    label = { Text("Browse") },
-                    colors = if (mode == PickerMode.BROWSE) {
-                        ChipDefaults.primaryChipColors()
-                    } else {
-                        ChipDefaults.secondaryChipColors()
-                    },
-                    modifier = Modifier.weight(1f)
-                )
-            }
-
-            // Content based on mode
-            when (mode) {
-                PickerMode.NEARBY -> NearbyMode(
-                    viewModel = viewModel,
-                    onStationSelected = { station ->
-                        viewModel.selectStation(station.id)
-                        onStationSelected()
-                    }
-                )
-                PickerMode.BROWSE -> BrowseMode(
-                    viewModel = viewModel,
-                    onStationSelected = { station ->
-                        viewModel.selectStation(station.id)
-                        onStationSelected()
-                    }
-                )
-            }
+        when (currentScreen) {
+            is PickerScreen.Start -> StartScreen(
+                onNearbyClick = { currentScreen = PickerScreen.Nearby },
+                onBrowseClick = { currentScreen = PickerScreen.Browse }
+            )
+            is PickerScreen.Nearby -> NearbyMode(
+                viewModel = viewModel,
+                onStationSelected = { station ->
+                    viewModel.selectStation(station.id)
+                    onStationSelected()
+                },
+                onBackClick = { currentScreen = PickerScreen.Start }
+            )
+            is PickerScreen.Browse -> BrowseMode(
+                viewModel = viewModel,
+                onStationSelected = { station ->
+                    viewModel.selectStation(station.id)
+                    onStationSelected()
+                },
+                onBackClick = { currentScreen = PickerScreen.Start }
+            )
         }
     }
 }
 
-private enum class PickerMode {
-    NEARBY,
-    BROWSE
+private sealed class PickerScreen {
+    object Start : PickerScreen()
+    object Nearby : PickerScreen()
+    object Browse : PickerScreen()
+}
+
+@Composable
+private fun StartScreen(
+    onNearbyClick: () -> Unit,
+    onBrowseClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(horizontal = 32.dp)
+        ) {
+            Text(
+                text = "Find Tide Stations",
+                style = MaterialTheme.typography.title2,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Chip(
+                onClick = onNearbyClick,
+                label = { Text("Nearby Stations") },
+                colors = ChipDefaults.primaryChipColors(),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Chip(
+                onClick = onBrowseClick,
+                label = { Text("Browse All Stations") },
+                colors = ChipDefaults.secondaryChipColors(),
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
 }
 
 @Composable
 private fun NearbyMode(
     viewModel: TideViewModel,
-    onStationSelected: (Station) -> Unit
+    onStationSelected: (Station) -> Unit,
+    onBackClick: () -> Unit
 ) {
     val context = LocalContext.current
     val nearbyStations by viewModel.nearbyStations.collectAsState()
@@ -217,7 +225,8 @@ private fun loadLocationAndStations(
 @Composable
 private fun BrowseMode(
     viewModel: TideViewModel,
-    onStationSelected: (Station) -> Unit
+    onStationSelected: (Station) -> Unit,
+    onBackClick: () -> Unit
 ) {
     val allStates by viewModel.allStates.collectAsState()
     val browseStations by viewModel.browseStations.collectAsState()
