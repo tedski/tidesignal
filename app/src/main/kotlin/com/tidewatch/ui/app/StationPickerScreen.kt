@@ -16,6 +16,8 @@ import androidx.core.content.ContextCompat
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.material.*
+import androidx.wear.compose.material.TimeText
+import androidx.wear.compose.material.Scaffold
 import com.google.android.gms.location.LocationServices
 import com.tidewatch.TideViewModel
 import com.tidewatch.data.StationRepository
@@ -36,54 +38,60 @@ fun StationPickerScreen(
 ) {
     var mode by remember { mutableStateOf(PickerMode.NEARBY) }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
+    Scaffold(
+        timeText = { TimeText() }
     ) {
-        // Mode selector
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                .fillMaxSize()
+                .padding(horizontal = 8.dp)
         ) {
-            Chip(
-                onClick = { mode = PickerMode.NEARBY },
-                label = { Text("Nearby") },
-                colors = if (mode == PickerMode.NEARBY) {
-                    ChipDefaults.primaryChipColors()
-                } else {
-                    ChipDefaults.secondaryChipColors()
-                },
-                modifier = Modifier.weight(1f)
-            )
-            Chip(
-                onClick = { mode = PickerMode.BROWSE },
-                label = { Text("Browse") },
-                colors = if (mode == PickerMode.BROWSE) {
-                    ChipDefaults.primaryChipColors()
-                } else {
-                    ChipDefaults.secondaryChipColors()
-                },
-                modifier = Modifier.weight(1f)
-            )
-        }
+            // Mode selector
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Chip(
+                    onClick = { mode = PickerMode.NEARBY },
+                    label = { Text("Nearby") },
+                    colors = if (mode == PickerMode.NEARBY) {
+                        ChipDefaults.primaryChipColors()
+                    } else {
+                        ChipDefaults.secondaryChipColors()
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+                Chip(
+                    onClick = { mode = PickerMode.BROWSE },
+                    label = { Text("Browse") },
+                    colors = if (mode == PickerMode.BROWSE) {
+                        ChipDefaults.primaryChipColors()
+                    } else {
+                        ChipDefaults.secondaryChipColors()
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+            }
 
-        // Content based on mode
-        when (mode) {
-            PickerMode.NEARBY -> NearbyMode(
-                viewModel = viewModel,
-                onStationSelected = { station ->
-                    viewModel.selectStation(station.id)
-                    onStationSelected()
-                }
-            )
-            PickerMode.BROWSE -> BrowseMode(
-                viewModel = viewModel,
-                onStationSelected = { station ->
-                    viewModel.selectStation(station.id)
-                    onStationSelected()
-                }
-            )
+            // Content based on mode
+            when (mode) {
+                PickerMode.NEARBY -> NearbyMode(
+                    viewModel = viewModel,
+                    onStationSelected = { station ->
+                        viewModel.selectStation(station.id)
+                        onStationSelected()
+                    }
+                )
+                PickerMode.BROWSE -> BrowseMode(
+                    viewModel = viewModel,
+                    onStationSelected = { station ->
+                        viewModel.selectStation(station.id)
+                        onStationSelected()
+                    }
+                )
+            }
         }
     }
 }
@@ -220,8 +228,10 @@ private fun BrowseMode(
         ScalingLazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
-                top = 32.dp,
-                bottom = 32.dp
+                top = 40.dp,
+                start = 8.dp,
+                end = 8.dp,
+                bottom = 40.dp
             )
         ) {
             item {
@@ -265,8 +275,10 @@ private fun BrowseMode(
             ScalingLazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
-                    top = 32.dp,
-                    bottom = 32.dp
+                    top = 40.dp,
+                    start = 8.dp,
+                    end = 8.dp,
+                    bottom = 40.dp
                 )
             ) {
                 item {
