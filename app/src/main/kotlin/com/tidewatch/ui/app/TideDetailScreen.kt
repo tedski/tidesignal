@@ -111,7 +111,7 @@ private fun DetailContent(
                     tideData = state.curve24h,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(120.dp)
+                        .height(140.dp)
                 )
             }
         }

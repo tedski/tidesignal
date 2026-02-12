@@ -260,7 +260,7 @@ private fun SuccessScreen(
                     tideData = state.curve24h,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(80.dp)
+                        .height(100.dp)
                 )
             }
         }
