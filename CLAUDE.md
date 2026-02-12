@@ -46,6 +46,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Datum**: MLLW (Mean Lower Low Water) for all heights
 - **Battery Target**: <2% per hour with screen on
 
+## Development Requirements
+
+- **JDK**: Java 17 or higher
+  - Android Studio's bundled JDK (automatically detected)
+  - Or install via Homebrew: `brew install openjdk@17`
+- **Gradle**: 9.0+ (included via wrapper)
+- **Android SDK**: API 30+ (WearOS 3)
+- **Python**: 3.11+ (for data pipeline)
+
+The project uses Gradle's Java Toolchain feature with the Foojay Resolver plugin to automatically detect and use the correct JDK version. No manual JAVA_HOME configuration needed.
+
 ## Development Commands
 
 ### Data Pipeline

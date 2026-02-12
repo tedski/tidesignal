@@ -32,13 +32,10 @@ android {
         }
     }
 
+    // Use Java 17 toolchain (auto-detected by foojay-resolver)
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
     }
 
     buildFeatures {
@@ -55,6 +52,11 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+}
+
+// Configure Kotlin to use Java 17 toolchain
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
