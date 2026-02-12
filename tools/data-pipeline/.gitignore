@@ -11,3 +11,5 @@ uv.lock
 # Data pipeline outputs
 stations.json
 tides.db
+tides-test.db
+tides-*.db

@@ -146,10 +146,17 @@ cd tidewatch
 2. Generate the tide database:
 ```bash
 cd tools/data-pipeline
-pip install -r requirements.txt
-python fetch_noaa_data.py
-python build_database.py
-cp tides.db ../../app/src/main/assets/
+
+# Recommended: Install uv for easier setup
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Test mode (5 stations, ~30 seconds - good for development)
+./run.sh
+cp tides-test.db ../../app/src/main/assets/tides.db
+
+# OR production mode (all 3,379 stations, ~30-45 minutes - for release builds)
+./run.sh --mode production
+cp tides.db ../../app/src/main/assets/tides.db
 ```
 
 3. Open in Android Studio and sync Gradle
@@ -158,13 +165,23 @@ cp tides.db ../../app/src/main/assets/
 
 ## Data Pipeline
 
-The `tools/data-pipeline/` directory contains scripts to fetch NOAA data:
+The `tools/data-pipeline/` directory contains scripts to fetch NOAA data with dual-mode operation:
 
-- `fetch_noaa_data.py` - Queries NOAA CO-OPS API for stations
+- **Test mode** (default): 5 stations, ~30 seconds - for rapid development iteration
+- **Production mode**: All 3,379 stations, ~30-45 minutes - for release builds
+
+```bash
+cd tools/data-pipeline
+./run.sh                    # Test mode (default)
+./run.sh --mode production  # Production mode
+```
+
+Scripts:
+- `fetch_noaa_data.py` - Queries NOAA CO-OPS API with retry logic
 - `build_database.py` - Builds SQLite database from JSON
-- Output: `tides.db` bundled in app assets
+- `run.sh` - Orchestrates the full pipeline with mode selection
 
-See [data pipeline README](tools/data-pipeline/README.md) for details.
+See [data pipeline README](tools/data-pipeline/README.md) for detailed usage and command reference.
 
 ## Testing
 

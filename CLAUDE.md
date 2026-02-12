@@ -66,17 +66,28 @@ The project uses Gradle's Java Toolchain feature with the Foojay Resolver plugin
 cd tools/data-pipeline
 
 # Recommended: Use uv (modern Python package manager)
-./run.sh                        # Runs both scripts automatically
-# Or manually:
-uv run fetch_noaa_data.py      # Fetch from NOAA API
-uv run build_database.py        # Build SQLite database
-cp tides.db ../../app/src/main/assets/
+# Install uv once: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Test mode (default) - 5 stations, ~30 seconds
+./run.sh
+cp tides-test.db ../../app/src/main/assets/tides.db
+
+# Production mode - all 3,379 stations, ~30-45 minutes
+./run.sh --mode production
+cp tides.db ../../app/src/main/assets/tides.db
+
+# Custom station list
+./run.sh --stations 9414290,8454000,8518750
+
+# Run manually with specific options
+uv run fetch_noaa_data.py --mode test --verbose
+uv run build_database.py --mode test
 
 # Alternative: Use pip (requires manual dependency installation)
 pip install -r requirements.txt
-python fetch_noaa_data.py
-python build_database.py
-cp tides.db ../../app/src/main/assets/
+python fetch_noaa_data.py --mode test
+python build_database.py --mode test
+cp tides-test.db ../../app/src/main/assets/tides.db
 ```
 
 ### Build & Test

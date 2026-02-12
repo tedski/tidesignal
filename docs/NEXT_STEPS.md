@@ -2,9 +2,9 @@
 
 Quick guide to complete the MVP implementation.
 
-## Step 1: Run Data Pipeline (5 minutes)
+## Step 1: Run Data Pipeline (<1 minute for test mode)
 
-Generate the sample tide database:
+Generate the tide database:
 
 ```bash
 cd tools/data-pipeline
@@ -12,18 +12,20 @@ cd tools/data-pipeline
 # Install uv once (if not already installed)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Run the pipeline
+# Test mode (recommended for development) - 5 stations, ~30 seconds
 ./run.sh
+cp tides-test.db ../../app/src/main/assets/tides.db
 
-# Or run manually with uv
-uv run fetch_noaa_data.py
-uv run build_database.py
-cp tides.db ../../app/src/main/assets/
+# Production mode (for release builds) - all 3,379 stations, ~30-45 minutes
+./run.sh --mode production
+cp tides.db ../../app/src/main/assets/tides.db
 ```
 
-This creates a SQLite database with 5 test stations.
+**Modes:**
+- **Test mode** (default): 5 well-distributed stations for rapid iteration
+- **Production mode**: All 3,379 NOAA stations for release builds
 
-**Note**: uv automatically manages dependencies in an isolated environment. If you prefer traditional pip, see `tools/data-pipeline/README.md` for alternative methods.
+**Note**: uv automatically manages dependencies in an isolated environment. For development, test mode is sufficient. Only run production mode when building release APKs. See `tools/data-pipeline/README.md` for more options.
 
 ## Step 2: Implement Main UI Screens (2-3 hours)
 

@@ -10,11 +10,53 @@ Reads stations.json and creates a SQLite database with:
 Output: tides.db (SQLite database)
 """
 
+import argparse
 import json
 import sqlite3
 import sys
 from pathlib import Path
 from typing import Any, Dict, List
+
+
+def parse_arguments() -> argparse.Namespace:
+    """
+    Parse command-line arguments.
+
+    Returns:
+        Parsed arguments
+    """
+    parser = argparse.ArgumentParser(
+        description="Build SQLite database from NOAA station data",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  %(prog)s                              # Test mode (tides-test.db)
+  %(prog)s --mode production            # Production mode (tides.db)
+  %(prog)s --input custom.json --output custom.db  # Custom files
+        """
+    )
+
+    parser.add_argument(
+        "--mode",
+        choices=["test", "production"],
+        default="test",
+        help="Database mode: 'test' (tides-test.db) or 'production' (tides.db)"
+    )
+
+    parser.add_argument(
+        "--input",
+        type=str,
+        default="stations.json",
+        help="Input JSON file (default: stations.json)"
+    )
+
+    parser.add_argument(
+        "--output",
+        type=str,
+        help="Output database file (overrides mode-based naming)"
+    )
+
+    return parser.parse_args()
 
 
 def create_schema(conn: sqlite3.Connection):
@@ -213,21 +255,39 @@ def build_database(stations_file: str, output_db: str):
 
 def main():
     """Main execution function."""
+    args = parse_arguments()
+
     print("=" * 60)
     print("NOAA Tide Database Builder")
     print("=" * 60)
     print()
 
-    stations_file = "stations.json"
-    output_db = "tides.db"
+    # Determine output filename based on mode or explicit argument
+    if args.output:
+        output_db = args.output
+    elif args.mode == "production":
+        output_db = "tides.db"
+    else:  # test mode
+        output_db = "tides-test.db"
+
+    # Check if input filename suggests custom mode
+    if args.input != "stations.json" and not args.output:
+        # Custom input without explicit output, use custom naming
+        input_stem = Path(args.input).stem
+        output_db = f"{input_stem}.db"
+
+    print(f"Mode: {args.mode}")
+    print(f"Input: {args.input}")
+    print(f"Output: {output_db}")
+    print()
 
     # Check if input file exists
-    if not Path(stations_file).exists():
-        print(f"Error: {stations_file} not found", file=sys.stderr)
+    if not Path(args.input).exists():
+        print(f"Error: {args.input} not found", file=sys.stderr)
         print("Run fetch_noaa_data.py first", file=sys.stderr)
         sys.exit(1)
 
-    build_database(stations_file, output_db)
+    build_database(args.input, output_db)
 
 
 if __name__ == "__main__":
