@@ -1,3 +1,6 @@
+# Claude local settings
+.clauce/settings.local.json
+
 # Built application files
 *.apk
 *.ap_
