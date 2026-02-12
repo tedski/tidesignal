@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
+import androidx.wear.compose.foundation.lazy.AutoCenteringParams
 import androidx.wear.compose.material.*
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.Scaffold
@@ -81,33 +82,38 @@ private fun StartScreen(
     onBrowseClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
-    Box(
+    ScalingLazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        autoCentering = AutoCenteringParams(itemIndex = 1) // Center on the Nearby button
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.padding(horizontal = 32.dp)
-        ) {
+        item {
             Text(
                 text = "Find Tide Stations",
                 style = MaterialTheme.typography.title2,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 4.dp)
             )
+        }
+        item {
             Chip(
                 onClick = onNearbyClick,
                 label = { Text("Nearby Stations") },
                 colors = ChipDefaults.primaryChipColors(),
                 modifier = Modifier.fillMaxWidth()
             )
+        }
+        item {
             Chip(
                 onClick = onBrowseClick,
                 label = { Text("Browse All Stations") },
                 colors = ChipDefaults.secondaryChipColors(),
                 modifier = Modifier.fillMaxWidth()
             )
+        }
+        item {
             Chip(
                 onClick = onSettingsClick,
                 label = { Text("Settings") },
