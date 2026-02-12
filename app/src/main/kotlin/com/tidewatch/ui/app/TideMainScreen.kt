@@ -234,18 +234,11 @@ private fun SuccessScreen(
             }
         }
 
-        // Mini 24-hour graph (clickable in active mode only)
+        // Mini 24-hour graph
         item {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .then(
-                        if (!isAmbient) {
-                            Modifier.clickable(onClick = onGraphClick)
-                        } else {
-                            Modifier
-                        }
-                    )
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
                 Text(
@@ -258,6 +251,18 @@ private fun SuccessScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(100.dp)
+                )
+            }
+        }
+
+        // View detailed tides button (hidden in ambient mode)
+        if (!isAmbient) {
+            item {
+                Chip(
+                    onClick = onGraphClick,
+                    label = { Text("View 7-Day Tides") },
+                    colors = ChipDefaults.secondaryChipColors(),
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }

@@ -17,7 +17,6 @@ import androidx.wear.compose.material.Text
 import com.tidewatch.TideViewModel
 import com.tidewatch.data.models.TideExtremum
 import com.tidewatch.ui.components.ExtremumCard
-import com.tidewatch.ui.components.TideGraph
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -25,7 +24,6 @@ import java.time.format.DateTimeFormatter
  * Detail screen showing extended tide information.
  *
  * Displays:
- * - Full 24-hour graph
  * - 7-day extrema grouped by day
  * - Station metadata
  */
@@ -82,46 +80,20 @@ private fun DetailContent(
         contentPadding = PaddingValues(
             top = 32.dp,
             bottom = 32.dp,
-            start = 10.dp,
-            end = 10.dp
+            start = 16.dp,
+            end = 16.dp
         ),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // Title
         item {
             Text(
-                text = "Tide Detail",
+                text = "7-Day Tides",
                 style = MaterialTheme.typography.title1,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-        // Full 24-hour graph
-        item {
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "24 Hour Forecast",
-                    style = MaterialTheme.typography.caption1,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-                TideGraph(
-                    tideData = state.curve24h,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(140.dp)
-                )
-            }
-        }
-
-        // 7-day extrema by day
-        item {
-            Text(
-                text = "7-Day Tides",
-                style = MaterialTheme.typography.title3,
-                modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
             )
         }
 
