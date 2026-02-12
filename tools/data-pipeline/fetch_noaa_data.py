@@ -97,18 +97,8 @@ def main():
     # Fetch all stations
     stations = fetch_stations()
 
-    # For MVP, we'll create a sample dataset with just a few well-known stations
-    # In production, you would fetch all stations
-    sample_stations = [
-        "9414290",  # San Francisco, CA
-        "8454000",  # Providence, RI
-        "8518750",  # The Battery, NY
-        "8658120",  # Wilmington, NC
-        "8636580",  # Cape Hatteras, NC
-    ]
-
-    print(f"\nFetching harmonic constituents for {len(sample_stations)} sample stations...")
-    print("(In production, this would fetch all ~3000 stations)")
+    print(f"\nFetching harmonic constituents for all {len(stations)} stations...")
+    print("This will take approximately 30-45 minutes due to API rate limiting...")
     print()
 
     enriched_stations = []
@@ -116,11 +106,7 @@ def main():
     for i, station_data in enumerate(stations):
         station_id = station_data.get("id")
 
-        # For MVP, only process sample stations
-        if station_id not in sample_stations:
-            continue
-
-        print(f"[{i+1}/{len(sample_stations)}] Processing station {station_id}: {station_data.get('name')}...")
+        print(f"[{i+1}/{len(stations)}] Processing station {station_id}: {station_data.get('name')}...")
 
         # Fetch harmonic constituents
         time.sleep(REQUEST_DELAY)  # Be respectful to API
