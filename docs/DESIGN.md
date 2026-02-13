@@ -1,4 +1,6 @@
-# TideWatch - WearOS Tide Prediction App Specification
+# TideWatch - Design Specification
+
+> **Original Design Document** - This is the comprehensive design specification and Product Requirements Document (PRD) for TideWatch. It serves as the authoritative reference for the project's architecture, features, and technical decisions. For a high-level overview, see [README.md](../README.md). For architectural details, see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Project Overview
 

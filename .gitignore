@@ -1,5 +1,5 @@
 # Claude local settings
-.clauce/settings.local.json
+.claude/settings.local.json
 
 # Built application files
 *.apk

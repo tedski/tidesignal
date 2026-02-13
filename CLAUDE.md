@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **TideWatch** is an offline-first WearOS tide prediction app using harmonic analysis of NOAA data.
 
-**Status**: Foundation complete (60% MVP), ready for UI implementation
+**Status**: Core functionality complete, main UI screens implemented, tile widget and AOD remaining
 **Language**: Kotlin
 **Framework**: Jetpack Compose for WearOS
 **Target**: WearOS 3+ (API 30+)
@@ -28,8 +28,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 3. **UI Layer** (`app/src/main/kotlin/com/tidewatch/ui/`)
    - `theme/` - Material You colors, typography, AOD support
-   - `components/` - Reusable widgets (TideGraph, DirectionIndicator, etc.)
-   - `app/` - Main screens (to be implemented)
+   - `components/` - Reusable widgets (TideGraph, DirectionIndicator, ExtremumCard, etc.)
+   - `app/` - Main screens (TideMainScreen, StationPickerScreen, navigation)
    - `tile/` - WearOS tile widget (to be implemented)
 
 4. **Data Pipeline** (`tools/data-pipeline/`)
@@ -115,22 +115,26 @@ cp tides-test.db ../../app/src/main/assets/tides.db
 
 ## Implementation Status
 
-**Completed (12/20 tasks)**:
+**Completed**:
 - ✅ Project structure and dependencies
 - ✅ Data models and database schema
 - ✅ Full calculation engine (Constituents, Astronomical, Harmonic, Cache)
-- ✅ Python data pipeline
-- ✅ UI theme and reusable components
-- ✅ Documentation (README, LICENSE, CONTRIBUTING)
+- ✅ Python data pipeline with test/production modes
+- ✅ UI theme and reusable components (TideGraph, DirectionIndicator, ExtremumCard)
+- ✅ Main UI screens (TideMainScreen, StationPickerScreen with nearby/browse modes)
+- ✅ Navigation and back handling
+- ✅ Location permission handling
+- ✅ Subordinate station support
+- ✅ Documentation reorganization (FOSS best practices)
 
-**Remaining (8/20 tasks)**:
-- ❌ Main UI screens (MainActivity, TideMainScreen, StationPicker, Detail, Settings)
+**Remaining**:
 - ❌ Tile widget
 - ❌ AOD optimization
-- ❌ Unit tests
+- ❌ Unit tests for calculation engine
+- ❌ Settings screen (preferences)
 - ❌ GitHub Actions workflows
 
-See `docs/IMPLEMENTATION_STATUS.md` for detailed status and `docs/NEXT_STEPS.md` for completion guide.
+See [docs/ROADMAP.md](docs/ROADMAP.md) for current development priorities. Historical status: [docs/archive/IMPLEMENTATION_STATUS_2026-02-11.md](docs/archive/IMPLEMENTATION_STATUS_2026-02-11.md)
 
 ## Code Style
 
@@ -158,8 +162,17 @@ See `docs/IMPLEMENTATION_STATUS.md` for detailed status and `docs/NEXT_STEPS.md`
 6. Run app: `./gradlew installDebug`
 7. See `CONTRIBUTING.md` for contribution guidelines
 
+## Documentation Structure
+
+Comprehensive documentation is available in the `docs/` directory:
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture and calculation engine
+- **[DEVELOPMENT.md](docs/DEVELOPMENT.md)** - Developer guide and setup instructions
+- **[DESIGN.md](docs/DESIGN.md)** - Full design specification and reference (original PRD)
+- **[ROADMAP.md](docs/ROADMAP.md)** - Feature roadmap and development status
+- **[README.md](docs/README.md)** - Documentation index
+
 ## References
 
 - NOAA API: https://api.tidesandcurrents.noaa.gov/
 - WearOS Compose: https://developer.android.com/training/wearables/compose
-- Spec: `docs/plans/SPEC.md`
+- Harmonic Analysis: See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed explanation

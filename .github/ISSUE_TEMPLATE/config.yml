@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/yourusername/tidewatch/tree/main/docs
+    about: Read the project documentation for guides and technical details
+  - name: NOAA Tide Data
+    url: https://tidesandcurrents.noaa.gov/
+    about: Official NOAA tide predictions and data sources
+  - name: WearOS Developer Guide
+    url: https://developer.android.com/training/wearables
+    about: Official WearOS development documentation

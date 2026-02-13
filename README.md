@@ -1,258 +1,149 @@
 # TideWatch
 
-> Offline-first tide prediction app for WearOS smartwatches
-
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![WearOS](https://img.shields.io/badge/WearOS-3%2B-green.svg)](https://wearos.google.com/)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9-purple.svg)](https://kotlinlang.org/)
+[![API](https://img.shields.io/badge/API-30%2B-brightgreen.svg)](https://developer.android.com/about/versions/11)
 
-TideWatch is an open-source WearOS app that provides accurate tide predictions for fishing and coastal activities, working completely offline using harmonic analysis of NOAA station data.
+> Offline-first tide prediction app for WearOS smartwatches using harmonic analysis of NOAA data
+
+<!-- Screenshot placeholder - add once UI is finalized -->
 
 ## Features
 
-- **Offline-first**: Complete functionality without network after installation
-- **Accurate predictions**: NOAA-style harmonic analysis with 37 tidal constituents
-- **Battery efficient**: Hybrid caching strategy pre-computes 7-day extrema
-- **Privacy-focused**: No tracking, analytics, or accounts required
-- **Location-aware**: Find nearest stations automatically (optional permission)
-- **Tile widget**: Glanceable tide info from your watch face
-- **Always-On Display**: Optimized for AOD mode with minimal battery impact
+- **Fully Offline**: Complete functionality without network connection after installation
+- **Accurate Predictions**: NOAA-grade harmonic analysis with 37 tidal constituents
+- **Battery Efficient**: <2% battery per hour with optimized caching strategy
+- **Privacy-First**: No tracking, analytics, or accounts required
+- **Location-Aware**: Automatic nearby station search (optional permission)
+- **Native WearOS**: Tile widget and Always-On Display support
 
-## Implementation Status
+## Installation
 
-### ✅ Completed
+### From Source
 
-**Foundation (Day 1-2)**
-- [x] WearOS project structure with Gradle + Kotlin DSL
-- [x] Data models (Station, HarmonicConstituent, TideExtremum, etc.)
-- [x] Room database schema with DAOs
-- [x] StationRepository with location-based search
-- [x] Python data pipeline scripts (NOAA API integration)
+1. Clone the repository and generate the tide database:
+   ```bash
+   git clone https://github.com/yourusername/tidewatch.git
+   cd tidewatch/tools/data-pipeline
 
-**Calculation Engine (Day 2)**
-- [x] 37 NOAA tidal constituent definitions
-- [x] AstronomicalCalculator (node factors, equilibrium arguments)
-- [x] HarmonicCalculator (core tide prediction engine)
-- [x] TideCache (7-day extrema pre-computation)
-- [x] Newton's method for finding high/low tides
+   # Install uv (recommended) or use pip
+   curl -LsSf https://astral.sh/uv/install.sh | sh
 
-**UI Components (Day 3)**
-- [x] Material You theme (optimized for WearOS)
-- [x] TideDirectionIndicator (rising/falling/slack with rate)
-- [x] ExtremumCard (high/low tide display)
-- [x] TideGraph (24-hour tide curve visualization)
-- [x] StationList (scrollable station picker)
+   # Generate database (test mode: 5 stations, ~30 seconds)
+   ./run.sh
+   cp tides-test.db ../../app/src/main/assets/tides.db
+   ```
 
-### 🚧 In Progress / Remaining
+2. Open in Android Studio and build:
+   ```bash
+   ./gradlew assembleDebug
+   ```
 
-**UI Screens**
-- [ ] Main tide display screen
-- [ ] Station picker screen
-- [ ] Detail screen (full tide curve + 7-day list)
-- [ ] Settings screen
-- [ ] Navigation setup
+3. Install on your WearOS device or emulator
 
-**Features**
-- [ ] Tile widget implementation
-- [ ] AOD optimization
-- [ ] Location permission handling
-- [ ] App initialization (database copy from assets)
+See [DEVELOPMENT.md](docs/DEVELOPMENT.md) for detailed build instructions.
 
-**Testing & Validation**
-- [ ] Unit tests for harmonic calculations
-- [ ] NOAA prediction comparison tests
-- [ ] Integration tests
+### From Releases
 
-**Infrastructure**
-- [ ] GitHub Actions CI/CD
-- [ ] Data update automation
-- [ ] Release workflow
+Pre-built APKs will be available in [Releases](https://github.com/yourusername/tidewatch/releases) once the app reaches stable version.
 
-## Architecture
+## Quick Start
 
-```
-┌─────────────────────────────────────────┐
-│          WearOS UI Layer                │
-│  ┌──────────────┐    ┌──────────────┐  │
-│  │  Watch App   │    │  Tile Widget │  │
-│  └──────────────┘    └──────────────┘  │
-└────────────┬─────────────────┬──────────┘
-             │                 │
-┌────────────┴─────────────────┴──────────┐
-│       Tide Calculation Engine           │
-│  ┌───────────────────────────────────┐  │
-│  │  HarmonicCalculator               │  │
-│  │  - 37 tidal constituents          │  │
-│  │  - Node factors (astronomical)    │  │
-│  │  - Newton's method for extrema    │  │
-│  └───────────────────────────────────┘  │
-│  ┌───────────────────────────────────┐  │
-│  │  TideCache (7-day extrema)        │  │
-│  └───────────────────────────────────┘  │
-└────────────┬────────────────────────────┘
-             │
-┌────────────┴────────────────────────────┐
-│        Station Database (Room)          │
-│  - ~3,000 NOAA stations                 │
-│  - Harmonic constituents per station    │
-│  - Station metadata (location, etc.)    │
-└─────────────────────────────────────────┘
-```
+1. **First Launch**: Grant location permission (optional) to find nearby stations
+2. **Select Station**: Browse by state or use "Nearby" for closest stations
+3. **View Tides**: See current tide, next high/low, and 24-hour graph
+4. **Add Tile**: Long-press watch face → Add Tile → TideWatch for glanceable info
 
-## Technical Details
-
-### Harmonic Analysis
-
-TideWatch uses the standard harmonic method employed by NOAA:
-
-```
-h(t) = Σ[A_i × f_i × cos(ω_i × t + φ_i - κ_i)]
-```
-
-Where:
-- `A_i` = constituent amplitude (from database)
-- `f_i` = node factor (from astronomical calculation)
-- `ω_i` = angular velocity (constituent speed)
-- `φ_i` = local phase (from database)
-- `κ_i` = equilibrium argument (from astronomical position)
-
-### Battery Optimization
-
-The hybrid caching strategy minimizes battery impact:
-
-1. **On station selection**: Pre-compute 7 days of high/low tides (~200ms)
-2. **On UI update**: Calculate current height only (~5ms)
-3. **Tile updates**: Every 5 minutes or on screen wake
-4. **AOD mode**: Reduce to 15-minute updates
-
-Target: <2% battery per hour with screen on
-
-## Build Instructions
+## Development
 
 ### Prerequisites
-
-- Android Studio Giraffe or later
-- Android SDK 34
-- JDK 17
+- Android Studio Giraffe+
+- JDK 17+
 - WearOS emulator or physical device
 
-### Setup
-
-1. Clone the repository:
+### Build System
 ```bash
-git clone https://github.com/yourusername/tidewatch.git
-cd tidewatch
+./gradlew assembleDebug     # Build debug APK
+./gradlew test              # Run unit tests
+./gradlew installDebug      # Install on device
 ```
 
-2. Generate the tide database:
-```bash
-cd tools/data-pipeline
-
-# Recommended: Install uv for easier setup
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Test mode (5 stations, ~30 seconds - good for development)
-./run.sh
-cp tides-test.db ../../app/src/main/assets/tides.db
-
-# OR production mode (all 3,379 stations, ~30-45 minutes - for release builds)
-./run.sh --mode production
-cp tides.db ../../app/src/main/assets/tides.db
-```
-
-3. Open in Android Studio and sync Gradle
-
-4. Run on WearOS emulator or device
-
-## Data Pipeline
-
-The `tools/data-pipeline/` directory contains scripts to fetch NOAA data with dual-mode operation:
-
-- **Test mode** (default): 5 stations, ~30 seconds - for rapid development iteration
-- **Production mode**: All 3,379 stations, ~30-45 minutes - for release builds
-
+### Data Pipeline
+Generate the tide database from NOAA data:
 ```bash
 cd tools/data-pipeline
-./run.sh                    # Test mode (default)
-./run.sh --mode production  # Production mode
+./run.sh --mode test        # Test: 5 stations, ~30 sec
+./run.sh --mode production  # Production: 3,379 stations, ~45 min
 ```
 
-Scripts:
-- `fetch_noaa_data.py` - Queries NOAA CO-OPS API with retry logic
-- `build_database.py` - Builds SQLite database from JSON
-- `run.sh` - Orchestrates the full pipeline with mode selection
-
-See [data pipeline README](tools/data-pipeline/README.md) for detailed usage and command reference.
-
-## Testing
-
-### Unit Tests
-
-```bash
-./gradlew test
-```
-
-### Validation Against NOAA
-
-Unit tests compare calculated predictions against published NOAA data:
-- Acceptable error: ±0.1 ft for height, ±2 minutes for times
-- Test multiple stations and tidal regimes
+See [DEVELOPMENT.md](docs/DEVELOPMENT.md) for comprehensive developer guide.
 
 ## Contributing
 
-Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Contributions are welcome! We're particularly interested in:
 
-Key areas for contribution:
-- UI/UX improvements for small screens
-- Additional stations (international)
-- Tidal current predictions
-- Watch face complications
-- Multi-language support
+- UI/UX improvements for small circular screens
+- Battery optimization
+- Test coverage
+- Internationalization
+- Documentation
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a pull request.
+
+## Documentation
+
+- **[Architecture](docs/ARCHITECTURE.md)** - System architecture and calculation engine
+- **[Development](docs/DEVELOPMENT.md)** - Comprehensive developer guide
+- **[Design](docs/DESIGN.md)** - Full design specification and reference
+- **[Roadmap](docs/ROADMAP.md)** - Feature roadmap and development status
+
+See [docs/README.md](docs/README.md) for complete documentation index.
 
 ## Data Sources
 
-- **Tide Data**: NOAA CO-OPS (public domain)
+Tide predictions are based on:
+- **NOAA CO-OPS**: ~3,000 harmonic tide stations (US waters)
+- **Public Domain**: NOAA data is US Government work
 - **API**: https://api.tidesandcurrents.noaa.gov/
-- **Constituents**: NOAA Special Publication NOS CO-OPS 3
+
+TideWatch is not affiliated with or endorsed by NOAA. For critical navigation or safety decisions, always consult official NOAA sources.
+
+## Technical Highlights
+
+- **Calculation Method**: Standard harmonic analysis (h = Σ[A×f×cos(ω×t+φ-κ)])
+- **37 Constituents**: Complete NOAA tidal constituent set
+- **Hybrid Caching**: Pre-compute 7-day extrema, calculate current height on-demand
+- **Room Database**: ~3,000 stations with harmonic constants bundled in app
+- **WearOS Native**: Jetpack Compose for Wear OS
+
+See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed technical information.
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0 - see [LICENSE](LICENSE) for details.
 
-**Note**: NOAA data is public domain (US Government work). The NOAA logo and branding are not used in this app.
+NOAA data is public domain. The NOAA logo and branding are not used in this app.
+
+## Support
+
+- **Issues**: [GitHub Issues](https://github.com/yourusername/tidewatch/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/tidewatch/discussions)
+- **Security**: See [SECURITY.md](SECURITY.md) for vulnerability reporting
+
+## Acknowledgments
+
+- **NOAA Center for Operational Oceanographic Products and Services** for comprehensive tide data and APIs
+- **WearOS development community** for tools and guidance
+- **pytides project** for harmonic calculation reference implementation
 
 ## References
 
-- [NOAA CO-OPS API Documentation](https://api.tidesandcurrents.noaa.gov/api/prod/)
+- [NOAA CO-OPS API](https://api.tidesandcurrents.noaa.gov/api/prod/)
 - [Harmonic Analysis of Tides (Schureman, 1958)](https://tidesandcurrents.noaa.gov/publications/)
 - [WearOS Design Guidelines](https://developer.android.com/training/wearables/design)
 - [Jetpack Compose for WearOS](https://developer.android.com/training/wearables/compose)
 
-## Roadmap
-
-### MVP (Current Phase)
-- Core tide prediction functionality
-- Basic UI with main screen and station picker
-- Tile widget
-- Location-based station search
-
-### Post-MVP
-- Watch face complications
-- Tidal current stations (different calculation)
-- Notification for optimal tide windows
-- Moon phase display
-- Export tide data for trip planning
-- Offline map view for station selection
-
-## Support
-
-For bug reports and feature requests, please use the [GitHub Issues](https://github.com/yourusername/tidewatch/issues) page.
-
-## Acknowledgments
-
-- NOAA for providing comprehensive tide data and APIs
-- The open-source community for WearOS development tools
-- Maritime community for feedback and testing
-
 ---
 
-**Made with ❤️ for fishers, surfers, and coastal enthusiasts**
+**TideWatch** - Accurate tide predictions for coastal adventures

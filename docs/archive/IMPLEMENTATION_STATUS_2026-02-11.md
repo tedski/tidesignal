@@ -1,7 +1,11 @@
 # TideWatch Implementation Status
 
+> **HISTORICAL DOCUMENT** - This file is archived for historical reference. For current project status, see the [Roadmap](../ROADMAP.md) or check [GitHub Issues](https://github.com/yourusername/tidewatch/issues).
+
 **Last Updated**: 2026-02-11
 **Overall Progress**: 14/20 tasks completed (70%)
+
+**Note**: This snapshot was taken mid-development. The project has since progressed significantly beyond this state, with the MVP now complete.
 
 ## Executive Summary
 

@@ -1,0 +1,111 @@
+name: Bug Report
+description: Report a bug or issue with TideWatch
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the information below to help us investigate.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: "When I tap the station name, the app crashes..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Open the app
+        2. Navigate to '...'
+        3. Tap on '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: "I expected the station details to open..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened? Include error messages if applicable.
+      placeholder: "The app crashed with error: ..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device Type
+      description: What device are you using?
+      options:
+        - Physical WearOS device
+        - WearOS Emulator
+        - Other (please specify in Additional Context)
+    validations:
+      required: true
+
+  - type: input
+    id: wearos-version
+    attributes:
+      label: WearOS Version
+      description: What version of WearOS is running? (e.g., WearOS 3.5)
+      placeholder: "WearOS 3.5"
+    validations:
+      required: false
+
+  - type: input
+    id: app-version
+    attributes:
+      label: TideWatch Version
+      description: What version of TideWatch are you using? (Check in Settings or build output)
+      placeholder: "v0.1.0 or commit hash"
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Stack Trace
+      description: If applicable, paste any relevant logs or stack traces
+      render: shell
+      placeholder: |
+        Paste logcat output or stack trace here
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here (screenshots, videos, etc.)
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues to avoid duplicates
+          required: true
+        - label: I am using the latest version of TideWatch
+          required: false
+        - label: This issue is reproducible
+          required: false

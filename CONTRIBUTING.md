@@ -10,19 +10,20 @@ Be respectful and constructive. We're building a tool for the maritime community
 
 ### Reporting Bugs
 
-Use GitHub Issues to report bugs. Include:
-- Description of the issue
-- Steps to reproduce
+Use [GitHub Issues](https://github.com/yourusername/tidewatch/issues/new/choose) to report bugs using our bug report template. The template will guide you through providing:
+- Clear description and steps to reproduce
 - Expected vs actual behavior
 - Device info (watch model, WearOS version)
-- Screenshots if applicable
+- Logs and screenshots if applicable
+
+**Security Issues**: For security vulnerabilities, please see [SECURITY.md](SECURITY.md) instead of opening a public issue.
 
 ### Suggesting Features
 
-Open an issue with the "enhancement" label. Describe:
-- The feature and its use case
-- Why it would be valuable
-- Any implementation ideas
+Use our [feature request template](https://github.com/yourusername/tidewatch/issues/new/choose) to suggest enhancements. The template helps you describe:
+- The problem this solves
+- Your proposed solution
+- Use cases and alternatives considered
 
 ### Pull Requests
 
@@ -74,7 +75,12 @@ Open an issue with the "enhancement" label. Describe:
 
 ## Development Setup
 
-See [README.md](README.md#build-instructions) for setup instructions.
+See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for comprehensive setup instructions including:
+- Environment prerequisites
+- Data pipeline usage
+- Build commands
+- Testing procedures
+- Code structure overview
 
 ### Running Tests
 
@@ -91,18 +97,36 @@ See [README.md](README.md#build-instructions) for setup instructions.
 
 ### Data Pipeline
 
-To work with the data pipeline:
+The data pipeline fetches NOAA station data and builds the bundled database:
 
 ```bash
 cd tools/data-pipeline
-pip install -r requirements.txt
-python fetch_noaa_data.py
-python build_database.py
+
+# Recommended: Install uv for easier setup
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Test mode (5 stations, ~30 seconds)
+./run.sh
+cp tides-test.db ../../app/src/main/assets/tides.db
+
+# Production mode (all 3,379 stations, ~45 minutes)
+./run.sh --mode production
+cp tides.db ../../app/src/main/assets/tides.db
 ```
+
+See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for detailed data pipeline documentation.
+
+## Documentation
+
+Before contributing, review:
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture and calculation engine
+- **[DEVELOPMENT.md](docs/DEVELOPMENT.md)** - Developer guide and code structure
+- **[DESIGN.md](docs/DESIGN.md)** - Full design specification
+- **[ROADMAP.md](docs/ROADMAP.md)** - Development roadmap and priorities
 
 ## Questions?
 
-Open an issue or discussion on GitHub. We're happy to help!
+Use our [question template](https://github.com/yourusername/tidewatch/issues/new?template=question.md) or start a [GitHub Discussion](https://github.com/yourusername/tidewatch/discussions). We're happy to help!
 
 ## License
 
