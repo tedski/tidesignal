@@ -22,6 +22,7 @@ import requests
 # NOAA API endpoints
 STATIONS_API = "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json"
 HARCON_API = "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/{station_id}/harcon.json"
+TIDEPREDOFFSETS_API = "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/{station_id}/tidepredoffsets.json"
 
 # API request settings
 REQUEST_TIMEOUT = 30  # seconds
@@ -160,11 +161,11 @@ def fetch_harmonic_constituents(station_id: str, verbose: bool = False) -> Optio
         Dictionary with harmonic constituents, or None if not available
 
     Note:
-        As of 2026, NOAA's CO-OPS API returns harmonic data for virtually all
-        active tide prediction stations. Historically, many stations were
-        "subordinate" (using offsets from reference stations), but NOAA has
-        upgraded their network. If a station returns None, it's marked as
-        subordinate for future compatibility, though this is rare in practice.
+        NOAA's CO-OPS API returns ~3,400 stations, but only ~1,250 have full
+        harmonic constituent data. The remaining ~2,100 stations return empty
+        constituent arrays - these are inactive, under maintenance, or legacy
+        subordinate stations. Stations with empty constituent data are marked
+        as "subordinate" and should be filtered from the UI.
     """
     url = HARCON_API.format(station_id=station_id)
 
@@ -190,6 +191,45 @@ def fetch_harmonic_constituents(station_id: str, verbose: bool = False) -> Optio
                 time.sleep(wait_time)
             else:
                 print(f"Warning: Could not fetch harmonics for {station_id} after {MAX_RETRIES} attempts: {e}", file=sys.stderr)
+                return None
+
+    return None
+
+
+def fetch_tide_pred_offsets(station_id: str, verbose: bool = False) -> Optional[Dict[str, Any]]:
+    """
+    Fetch tide prediction offsets for a subordinate station.
+
+    Args:
+        station_id: NOAA station ID
+        verbose: Enable detailed logging
+
+    Returns:
+        Dictionary with tide prediction offsets, or None if not available
+    """
+    url = TIDEPREDOFFSETS_API.format(station_id=station_id)
+
+    for attempt in range(MAX_RETRIES):
+        try:
+            response = requests.get(url, timeout=REQUEST_TIMEOUT)
+
+            if response.status_code == 404:
+                return None
+
+            response.raise_for_status()
+            data = response.json()
+
+            return data
+
+        except requests.exceptions.RequestException as e:
+            if attempt < MAX_RETRIES - 1:
+                wait_time = 2 ** attempt
+                if verbose:
+                    print(f"  Retry {attempt + 1}/{MAX_RETRIES} after {wait_time}s (error: {e})")
+                time.sleep(wait_time)
+            else:
+                if verbose:
+                    print(f"  Warning: Could not fetch offsets for {station_id}: {e}")
                 return None
 
     return None
@@ -249,19 +289,38 @@ def main():
         elif (i + 1) % 100 == 0:
             print(f"[{i+1}/{len(stations)}] Progress: {int((i+1)/len(stations)*100)}% complete...")
 
+        # Check if station has a reference_id (indicates subordinate station)
+        reference_id = station_data.get("reference_id")
+
         # Fetch harmonic constituents
         time.sleep(REQUEST_DELAY)  # Be respectful to API
         harmonics = fetch_harmonic_constituents(station_id, args.verbose)
 
-        if harmonics:
+        # Check if we have usable harmonic data (non-empty constituent list)
+        if harmonics and len(harmonics.get('HarmonicConstituents', [])) > 0:
             station_data["harmonics"] = harmonics
             station_data["type"] = "harmonic"
             if len(stations) < 100 or args.verbose:
                 print(f"  ✓ Found {len(harmonics.get('HarmonicConstituents', []))} constituents")
         else:
+            # No harmonics or empty - likely subordinate station
             station_data["type"] = "subordinate"
-            if len(stations) < 100 or args.verbose:
-                print(f"  - No harmonic data (subordinate station)")
+
+            # If has reference_id, fetch tide prediction offsets
+            if reference_id:
+                station_data["referenceStationId"] = reference_id
+                time.sleep(REQUEST_DELAY)
+                offsets = fetch_tide_pred_offsets(station_id, args.verbose)
+                if offsets:
+                    station_data["tidepredoffsets"] = offsets
+                    if len(stations) < 100 or args.verbose:
+                        print(f"  → Subordinate station (references {reference_id})")
+                else:
+                    if len(stations) < 100 or args.verbose:
+                        print(f"  - Subordinate station (no offset data available)")
+            else:
+                if len(stations) < 100 or args.verbose:
+                    print(f"  - No harmonic data (inactive or subordinate)")
 
         enriched_stations.append(station_data)
 
@@ -275,10 +334,10 @@ def main():
     print()
     print(f"✓ Data saved to {args.output}")
     print(f"  Total stations: {len(enriched_stations)}")
-    print(f"  Harmonic stations: {harmonic_count}")
-    print(f"  Subordinate stations: {subordinate_count}")
-    if subordinate_count == 0:
-        print(f"  Note: All NOAA stations currently provide harmonic data (network modernization)")
+    print(f"  Harmonic stations: {harmonic_count} (with full constituent data)")
+    print(f"  Subordinate/inactive stations: {subordinate_count} (empty or no constituent data)")
+    if subordinate_count > 0:
+        print(f"  Note: Subordinate/inactive stations should be filtered from UI")
     print()
     print("Next step: Run build_database.py to create SQLite database")
 

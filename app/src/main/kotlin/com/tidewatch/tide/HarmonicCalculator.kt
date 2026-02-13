@@ -18,13 +18,20 @@ import kotlin.math.*
  * - φ_i = local phase (from database)
  * - κ_i = equilibrium argument (from astronomical calculation)
  *
+ * Supports subordinate stations by transparently resolving to reference stations
+ * and applying time/height offsets.
+ *
  * @property constituents Map of station ID to list of harmonic constituents
  * @property subordinateOffsets Map of station ID to subordinate offset data
  */
 class HarmonicCalculator(
     private val constituents: Map<String, List<HarmonicConstituent>>,
-    private val subordinateOffsets: Map<String, SubordinateOffset> = emptyMap()
+    subordinateOffsets: Map<String, SubordinateOffset> = emptyMap()
 ) {
+    /**
+     * Helper for subordinate station calculations.
+     */
+    private val subordinateCalculator = SubordinateCalculator(subordinateOffsets)
 
     companion object {
         /**
@@ -63,13 +70,20 @@ class HarmonicCalculator(
     /**
      * Calculate the tide height at a specific time for a station.
      *
-     * @param stationId Station identifier
+     * For subordinate stations, automatically resolves to reference station,
+     * calculates using reference harmonics, and applies height offsets.
+     *
+     * @param stationId Station identifier (harmonic or subordinate)
      * @param time UTC time for calculation
      * @return Tide height in feet or meters (relative to MLLW datum)
-     * @throws IllegalArgumentException if station has no constituents
+     * @throws IllegalArgumentException if station has no constituents and is not subordinate
      */
     fun calculateHeight(stationId: String, time: Instant): Double {
-        val stationConstituents = constituents[stationId]
+        // Resolve to reference station if subordinate
+        val effectiveStationId = subordinateCalculator.getReferenceStationId(stationId)
+            ?: stationId
+
+        val stationConstituents = constituents[effectiveStationId]
             ?: throw IllegalArgumentException("No constituents found for station $stationId")
 
         if (stationConstituents.isEmpty()) {
@@ -109,6 +123,12 @@ class HarmonicCalculator(
             height += contribution
         }
 
+        // Apply subordinate station height offset if needed
+        if (subordinateCalculator.isSubordinateStation(stationId)) {
+            val referenceRate = calculateRateOfChangeInternal(effectiveStationId, time)
+            height = subordinateCalculator.applyHeightOffset(stationId, height, referenceRate)
+        }
+
         return height
     }
 
@@ -116,22 +136,81 @@ class HarmonicCalculator(
      * Calculate the rate of change of tide height (derivative) at a specific time.
      *
      * Uses numerical differentiation with a small time step.
+     * For subordinate stations, returns the reference station's rate (approximation).
      *
      * @param stationId Station identifier
      * @param time UTC time for calculation
      * @return Rate of change in feet/hour or meters/hour (positive = rising, negative = falling)
      */
     fun calculateRateOfChange(stationId: String, time: Instant): Double {
+        // Use reference station for rate calculation to avoid circular dependency
+        // (we need rate to determine height multiplier for subordinates)
+        val effectiveStationId = subordinateCalculator.getReferenceStationId(stationId)
+            ?: stationId
+
+        return calculateRateOfChangeInternal(effectiveStationId, time)
+    }
+
+    /**
+     * Internal rate of change calculation without subordinate resolution.
+     * Used to avoid circular dependency when applying subordinate offsets.
+     */
+    private fun calculateRateOfChangeInternal(stationId: String, time: Instant): Double {
         val timeBefore = time.minusSeconds(DERIVATIVE_TIME_STEP_SECONDS.toLong())
         val timeAfter = time.plusSeconds(DERIVATIVE_TIME_STEP_SECONDS.toLong())
 
-        val heightBefore = calculateHeight(stationId, timeBefore)
-        val heightAfter = calculateHeight(stationId, timeAfter)
+        // Calculate reference station heights at both times
+        val effectiveStationId = subordinateCalculator.getReferenceStationId(stationId)
+            ?: stationId
+
+        val heightBefore = calculateHeightInternal(effectiveStationId, timeBefore)
+        val heightAfter = calculateHeightInternal(effectiveStationId, timeAfter)
 
         val deltaHeight = heightAfter - heightBefore
         val deltaHours = (2.0 * DERIVATIVE_TIME_STEP_SECONDS) / 3600.0
 
         return deltaHeight / deltaHours
+    }
+
+    /**
+     * Internal height calculation without subordinate offsets.
+     * Used to calculate reference station heights for rate calculations.
+     */
+    private fun calculateHeightInternal(stationId: String, time: Instant): Double {
+        val stationConstituents = constituents[stationId]
+            ?: throw IllegalArgumentException("No constituents found for station $stationId")
+
+        if (stationConstituents.isEmpty()) {
+            throw IllegalArgumentException("Station $stationId has no constituents")
+        }
+
+        // Calculate hours since reference epoch
+        val hoursSinceEpoch = Duration.between(REFERENCE_EPOCH, time).seconds / 3600.0
+
+        // Sum all constituent contributions
+        var height = 0.0
+
+        for (constituent in stationConstituents) {
+            val constituentDef = Constituents.getConstituent(constituent.constituentName)
+                ?: continue // Skip unknown constituents
+
+            val v0 = v0Cache[constituent.constituentName]
+                ?: error("V0 not found for constituent ${constituent.constituentName}")
+
+            val nodeFactor = AstronomicalCalculator.calculateNodeFactor(constituentDef, time)
+            val nodalPhase = 0.0
+
+            val omega = constituentDef.speed
+            val phase = constituent.phaseLocal
+            val amplitude = constituent.amplitude
+
+            val argument = toRadians(omega * hoursSinceEpoch + (v0 + nodalPhase) - phase)
+            val contribution = amplitude * nodeFactor * cos(argument)
+
+            height += contribution
+        }
+
+        return height
     }
 
     /**
@@ -163,8 +242,10 @@ class HarmonicCalculator(
      * Find the next tide extremum (high or low) after a given time.
      *
      * Uses Newton's method to find where the derivative (rate of change) equals zero.
+     * For subordinate stations, finds extremum at reference station, applies time offset,
+     * and recalculates height at offset time with appropriate multiplier.
      *
-     * @param stationId Station identifier
+     * @param stationId Station identifier (harmonic or subordinate)
      * @param startTime UTC time to start searching from
      * @param findHigh If true, find next high tide; if false, find next low tide
      * @return TideExtremum object with time and height, or null if not found
@@ -174,6 +255,10 @@ class HarmonicCalculator(
         startTime: Instant,
         findHigh: Boolean
     ): TideExtremum? {
+        // For subordinate stations, work with reference station
+        val effectiveStationId = subordinateCalculator.getReferenceStationId(stationId)
+            ?: stationId
+
         // Start searching from slightly after startTime
         var searchTime = startTime.plusSeconds(600) // Start 10 minutes ahead
 
@@ -182,18 +267,18 @@ class HarmonicCalculator(
         val maxSearchTime = startTime.plusSeconds(30 * 3600)
 
         // Find the general vicinity of an extremum by looking for sign change in derivative
-        var lastRate = calculateRateOfChange(stationId, searchTime)
+        var lastRate = calculateRateOfChange(effectiveStationId, searchTime)
         var searchStep = Duration.ofMinutes(30)
 
         while (searchTime.isBefore(maxSearchTime)) {
             searchTime = searchTime.plus(searchStep)
-            val currentRate = calculateRateOfChange(stationId, searchTime)
+            val currentRate = calculateRateOfChange(effectiveStationId, searchTime)
 
             // Check for sign change (derivative crosses zero)
             if (lastRate * currentRate <= 0) {
-                // Refine using Newton's method
+                // Refine using Newton's method on reference station
                 val extremum = refineExtremumWithNewton(
-                    stationId,
+                    effectiveStationId,
                     searchTime.minusSeconds(searchStep.seconds),
                     searchTime
                 )
@@ -202,6 +287,24 @@ class HarmonicCalculator(
                     // Verify this is the type of extremum we're looking for
                     val isHigh = extremum.type == TideExtremum.Type.HIGH
                     if (isHigh == findHigh) {
+                        // Apply subordinate station time offset if needed
+                        if (subordinateCalculator.isSubordinateStation(stationId)) {
+                            val offsetTime = subordinateCalculator.applyTimeOffset(
+                                stationId,
+                                extremum.type,
+                                extremum.time
+                            )
+
+                            // Recalculate height at offset time with subordinate multiplier
+                            val offsetHeight = calculateHeight(stationId, offsetTime)
+
+                            return TideExtremum(
+                                time = offsetTime,
+                                height = offsetHeight,
+                                type = extremum.type
+                            )
+                        }
+
                         return extremum
                     }
                 }

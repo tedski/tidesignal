@@ -237,6 +237,32 @@ def insert_harmonics(conn: sqlite3.Connection, station_id: str, harmonics: Dict[
         """, (station_id, name, amplitude, phase))
 
 
+def insert_subordinate_offsets(conn: sqlite3.Connection, station_id: str, reference_id: str, offsets: Dict[str, Any]):
+    """
+    Insert subordinate station offsets.
+
+    Args:
+        conn: SQLite connection
+        station_id: Subordinate station ID
+        reference_id: Reference (harmonic) station ID
+        offsets: Tide prediction offsets dictionary
+    """
+    cursor = conn.cursor()
+
+    # Extract offset data from NOAA format
+    # The offsets dict contains time and height corrections
+    time_high = int(offsets.get("timeOffsetHighTide", 0))
+    time_low = int(offsets.get("timeOffsetLowTide", 0))
+    height_high = float(offsets.get("heightOffsetHighTide", 1.0))
+    height_low = float(offsets.get("heightOffsetLowTide", 1.0))
+
+    cursor.execute("""
+        INSERT OR REPLACE INTO subordinate_offsets
+        (stationId, referenceStationId, timeOffsetHigh, timeOffsetLow, heightOffsetHigh, heightOffsetLow)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (station_id, reference_id, time_high, time_low, height_high, height_low))
+
+
 def build_database(stations_file: str, output_db: str):
     """
     Build SQLite database from stations JSON file.
@@ -285,6 +311,14 @@ def build_database(stations_file: str, output_db: str):
                 insert_harmonics(conn, station_id, station_data["harmonics"])
                 harmonic_count += 1
             else:
+                # Insert subordinate station offsets if available
+                if "referenceStationId" in station_data and "tidepredoffsets" in station_data:
+                    insert_subordinate_offsets(
+                        conn,
+                        station_id,
+                        station_data["referenceStationId"],
+                        station_data["tidepredoffsets"]
+                    )
                 subordinate_count += 1
 
         conn.commit()
