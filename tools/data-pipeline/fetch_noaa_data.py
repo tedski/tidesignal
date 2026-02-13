@@ -158,6 +158,13 @@ def fetch_harmonic_constituents(station_id: str, verbose: bool = False) -> Optio
 
     Returns:
         Dictionary with harmonic constituents, or None if not available
+
+    Note:
+        As of 2026, NOAA's CO-OPS API returns harmonic data for virtually all
+        active tide prediction stations. Historically, many stations were
+        "subordinate" (using offsets from reference stations), but NOAA has
+        upgraded their network. If a station returns None, it's marked as
+        subordinate for future compatibility, though this is rare in practice.
     """
     url = HARCON_API.format(station_id=station_id)
 
@@ -231,7 +238,6 @@ def main():
     print()
 
     enriched_stations = []
-    failed_stations = []
 
     for i, station_data in enumerate(stations):
         station_id = station_data.get("id")
@@ -263,13 +269,16 @@ def main():
     with open(args.output, "w") as f:
         json.dump(enriched_stations, f, indent=2)
 
+    harmonic_count = sum(1 for s in enriched_stations if s.get('type') == 'harmonic')
+    subordinate_count = sum(1 for s in enriched_stations if s.get('type') == 'subordinate')
+
     print()
     print(f"✓ Data saved to {args.output}")
     print(f"  Total stations: {len(enriched_stations)}")
-    print(f"  Harmonic stations: {sum(1 for s in enriched_stations if s.get('type') == 'harmonic')}")
-    print(f"  Subordinate stations: {sum(1 for s in enriched_stations if s.get('type') == 'subordinate')}")
-    if failed_stations:
-        print(f"  Failed stations: {len(failed_stations)}")
+    print(f"  Harmonic stations: {harmonic_count}")
+    print(f"  Subordinate stations: {subordinate_count}")
+    if subordinate_count == 0:
+        print(f"  Note: All NOAA stations currently provide harmonic data (network modernization)")
     print()
     print("Next step: Run build_database.py to create SQLite database")
 

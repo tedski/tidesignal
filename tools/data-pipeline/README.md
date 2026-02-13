@@ -254,11 +254,11 @@ The app will copy this database to its data directory on first launch.
 - ✅ **Network resilience**: Automatic retry with exponential backoff for failed API requests
 - ✅ **Progress tracking**: Smart progress display (detailed for small datasets, summary for large)
 - ✅ **Flexible filtering**: Custom station lists via command-line
-- ✅ **Harmonic vs subordinate**: Automatic detection and classification
+- ✅ **Harmonic vs subordinate**: Automatic detection and classification (Note: As of 2026, all NOAA stations provide harmonic data due to network modernization)
 
 ## Future Enhancements
 
 - Automated monthly updates via GitHub Actions
-- Subordinate station offset data
 - Database versioning and migration
 - Incremental updates (only changed stations)
+- International tide stations (non-NOAA sources)

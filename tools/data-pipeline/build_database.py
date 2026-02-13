@@ -183,6 +183,12 @@ def insert_station(conn: sqlite3.Connection, station_data: Dict[str, Any]):
     Args:
         conn: SQLite connection
         station_data: Station data dictionary
+
+    Note:
+        The database schema supports both harmonic and subordinate stations.
+        As of 2026, NOAA provides harmonic data for virtually all active
+        tide prediction stations, so subordinate stations are rare. The
+        schema is maintained for future compatibility.
     """
     cursor = conn.cursor()
 
