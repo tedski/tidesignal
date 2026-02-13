@@ -12,10 +12,74 @@ Output: tides.db (SQLite database)
 
 import argparse
 import json
+import re
 import sqlite3
 import sys
 from pathlib import Path
 from typing import Any, Dict, List
+
+
+def normalize_station_name(name: str) -> str:
+    """
+    Convert NOAA station names to title case for better readability.
+
+    Handles special cases:
+    - "SAN FRANCISCO" -> "San Francisco"
+    - "NEW YORK (THE BATTERY)" -> "New York (The Battery)"
+    - "O'BRIEN ISLAND" -> "O'Brien Island"
+    - "MCDONALD POINT" -> "McDonald Point"
+
+    Args:
+        name: Raw station name from NOAA (typically ALL CAPS)
+
+    Returns:
+        Formatted station name in title case
+    """
+    if not name or name.isspace():
+        return name
+
+    # Minor words that should stay lowercase (except at start or after parentheses)
+    minor_words = {'the', 'of', 'and', 'at', 'in', 'on', 'a', 'an', 'to'}
+
+    def format_word(word: str, is_first: bool, after_paren: bool) -> str:
+        """Format a single word with title case rules."""
+        if not word:
+            return word
+
+        # Handle parentheses at start of word
+        if word.startswith('('):
+            if len(word) == 1:
+                return word
+            return '(' + format_word(word[1:], is_first=True, after_paren=True)
+
+        # Handle apostrophes (O'Brien, McDonald's)
+        if "'" in word:
+            parts = word.split("'")
+            return "'".join(part.capitalize() for part in parts)
+
+        # Handle commas (preserve them)
+        if word.endswith(','):
+            return format_word(word[:-1], is_first, after_paren) + ','
+
+        word_lower = word.lower()
+
+        # Keep minor words lowercase unless first word or after parenthesis
+        if not is_first and not after_paren and word_lower in minor_words:
+            return word_lower
+
+        # Capitalize first letter, lowercase the rest
+        return word_lower.capitalize()
+
+    # Split on spaces and process each word
+    words = name.split()
+    result = []
+
+    for i, word in enumerate(words):
+        is_first = (i == 0)
+        after_paren = (i > 0 and result[-1].endswith('('))
+        result.append(format_word(word, is_first, after_paren))
+
+    return ' '.join(result)
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -123,7 +187,7 @@ def insert_station(conn: sqlite3.Connection, station_data: Dict[str, Any]):
     cursor = conn.cursor()
 
     station_id = station_data.get("id")
-    name = station_data.get("name", "Unknown")
+    name = normalize_station_name(station_data.get("name", "Unknown"))
     state = station_data.get("state", station_data.get("region", "Unknown"))
     lat = float(station_data.get("lat", 0.0))
     lon = float(station_data.get("lng", 0.0))

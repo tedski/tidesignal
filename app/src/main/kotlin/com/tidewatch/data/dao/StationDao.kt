@@ -42,9 +42,9 @@ interface StationDao {
     suspend fun getStationsByState(state: String): List<Station>
 
     /**
-     * Get all unique states.
+     * Get all unique states (excluding blank/territory entries).
      */
-    @Query("SELECT DISTINCT state FROM stations ORDER BY state ASC")
+    @Query("SELECT DISTINCT state FROM stations WHERE state != '' ORDER BY state ASC")
     suspend fun getAllStates(): List<String>
 
     /**
