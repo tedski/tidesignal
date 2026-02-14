@@ -19,6 +19,7 @@ import com.tidewatch.TideViewModel
 import com.tidewatch.ui.components.ExtremumCard
 import com.tidewatch.ui.components.TideDirectionIndicator
 import com.tidewatch.ui.components.TideGraph
+import com.tidewatch.utils.formatHeight
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
@@ -264,7 +265,8 @@ private fun SuccessScreen(
                     tideData = state.curve24h,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(100.dp)
+                        .height(100.dp),
+                    useMetric = useMetric
                 )
             }
         }
@@ -281,17 +283,5 @@ private fun SuccessScreen(
             }
         }
         }
-    }
-}
-
-/**
- * Format height for display with units.
- */
-private fun formatHeight(height: Double, useMetric: Boolean): String {
-    return if (useMetric) {
-        val meters = height * 0.3048 // Convert feet to meters
-        "%.1f m".format(meters)
-    } else {
-        "%.1f ft".format(height)
     }
 }

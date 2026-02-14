@@ -12,6 +12,7 @@ import androidx.wear.compose.material.Text
 import com.tidewatch.data.models.TideExtremum
 import com.tidewatch.ui.theme.HighTideColor
 import com.tidewatch.ui.theme.LowTideColor
+import com.tidewatch.utils.formatHeight
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -76,16 +77,4 @@ private fun formatTime(extremum: TideExtremum): String {
     val formatter = DateTimeFormatter.ofPattern("h:mm a")
     val localTime = extremum.time.atZone(ZoneId.systemDefault())
     return formatter.format(localTime)
-}
-
-/**
- * Format height for display.
- */
-private fun formatHeight(height: Double, useMetric: Boolean): String {
-    return if (useMetric) {
-        val meters = height * 0.3048 // Convert feet to meters
-        "%.1f m".format(meters)
-    } else {
-        "%.1f ft".format(height)
-    }
 }
