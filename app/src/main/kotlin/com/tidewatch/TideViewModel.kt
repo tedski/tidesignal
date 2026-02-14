@@ -132,8 +132,15 @@ class TideViewModel(
                 intervalMinutes = 10
             )
 
-            // Get 7-day extrema from cache
-            val extrema7d = cache.getAllExtrema(stationId)
+            // Get 7-day extrema from cache, filtered to show:
+            // - 1 previous tide (most recent before now)
+            // - All tides for next 7 days
+            val allExtremaFromCache = cache.getAllExtrema(stationId)
+            val previousExtremum = allExtremaFromCache.lastOrNull { it.time <= now }
+            val futureExtrema = allExtremaFromCache.filter {
+                it.time > now && it.time <= now.plus(7, ChronoUnit.DAYS)
+            }
+            val extrema7d = listOfNotNull(previousExtremum) + futureExtrema
 
             _state.value = TideUiState.Success(
                 station = station,

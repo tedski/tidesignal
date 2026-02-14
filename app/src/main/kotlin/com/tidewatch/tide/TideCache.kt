@@ -176,8 +176,8 @@ class TideCache(
 
             // Generate new cache
             val now = Instant.now()
-            val startTime = now.truncatedTo(ChronoUnit.DAYS) // Start of today (UTC)
-            val endTime = startTime.plus(7, ChronoUnit.DAYS) // 7 days ahead
+            val startTime = now.minus(1, ChronoUnit.DAYS) // Include 1 day before for "previous tide"
+            val endTime = now.plus(7, ChronoUnit.DAYS) // 7 days ahead from now
 
             val extrema = calculator.findExtrema(stationId, startTime, endTime)
 
