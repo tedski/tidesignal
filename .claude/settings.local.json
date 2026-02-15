@@ -103,7 +103,10 @@
       "WebFetch(domain:ocefpaf.github.io)",
       "WebFetch(domain:en.wikipedia.org)",
       "Bash(tar:*)",
-      "Bash(xz:*)"
+      "Bash(xz:*)",
+      "Bash(/Users/tedski/Library/Android/sdk/emulator/emulator:*)",
+      "Bash(/Users/tedski/Library/Android/sdk/platform-tools/adb devices)",
+      "Bash(/Users/tedski/Library/Android/sdk/platform-tools/adb install:*)"
     ]
   }
 }

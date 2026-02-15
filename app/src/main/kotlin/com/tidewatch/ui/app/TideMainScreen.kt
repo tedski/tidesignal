@@ -175,13 +175,8 @@ private fun SuccessScreen(
     val listState = rememberScalingLazyListState()
 
     Scaffold(
-        timeText = {
-            // Standard WearOS TimeText component - curved on round screens,
-            // stays fixed at top while content scrolls underneath
-            TimeText()
-        },
+        timeText = { TimeText() },
         positionIndicator = {
-            // Shows scroll position on the edge of the screen
             PositionIndicator(scalingLazyListState = listState)
         }
     ) {
@@ -189,7 +184,7 @@ private fun SuccessScreen(
             modifier = Modifier.fillMaxSize(),
             state = listState,
             contentPadding = PaddingValues(
-                top = 40.dp, // Extra padding for TimeText at top
+                top = 40.dp,
                 bottom = 32.dp,
                 start = 16.dp,
                 end = 16.dp
@@ -198,7 +193,6 @@ private fun SuccessScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             autoCentering = AutoCenteringParams(itemIndex = 1) // Center on current tide height
         ) {
-            // Station name (clickable in active mode only)
         item {
             Text(
                 text = state.station.name,
@@ -219,7 +213,6 @@ private fun SuccessScreen(
             )
         }
 
-        // Current tide height (LARGE)
         item {
             Text(
                 text = formatHeight(state.currentHeight.height, useMetric),
@@ -229,7 +222,6 @@ private fun SuccessScreen(
             )
         }
 
-        // Direction indicator
         item {
             TideDirectionIndicator(
                 tideHeight = state.currentHeight,
@@ -238,7 +230,6 @@ private fun SuccessScreen(
             )
         }
 
-        // Next 2 tides (in chronological order)
         state.nextExtrema.forEach { extremum ->
             item {
                 ExtremumCard(
@@ -249,7 +240,6 @@ private fun SuccessScreen(
             }
         }
 
-        // Mini 24-hour graph
         item {
             Column(
                 modifier = Modifier
@@ -271,7 +261,6 @@ private fun SuccessScreen(
             }
         }
 
-        // View detailed tides button (hidden in ambient mode)
         if (!isAmbient) {
             item {
                 Chip(

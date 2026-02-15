@@ -19,6 +19,7 @@ import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
 import com.tidewatch.TideViewModel
+import com.tidewatch.data.models.Station
 import com.tidewatch.data.models.TideExtremum
 import com.tidewatch.ui.components.ExtremumCard
 import java.time.ZoneId
@@ -100,7 +101,6 @@ private fun DetailContent(
             ),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-        // Title
         item {
             Text(
                 text = "7-Day Tides",
@@ -113,7 +113,6 @@ private fun DetailContent(
         }
 
         groupedExtrema.forEach { (date, extremaForDay) ->
-            // Day header
             item {
                 Text(
                     text = formatDate(date),
@@ -123,7 +122,6 @@ private fun DetailContent(
                 )
             }
 
-            // Extrema cards for this day
             items(extremaForDay) { extremum ->
                 ExtremumCard(
                     extremum = extremum,
@@ -133,7 +131,6 @@ private fun DetailContent(
             }
         }
 
-        // Station metadata
         item {
             Text(
                 text = "Station Info",
@@ -144,7 +141,7 @@ private fun DetailContent(
 
         item {
             Card(
-                onClick = { /* No action */ },
+                onClick = {},
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(
@@ -156,7 +153,7 @@ private fun DetailContent(
                     MetadataRow(label = "ID", value = state.station.id)
                     MetadataRow(
                         label = "Type",
-                        value = if (state.station.isHarmonic()) "Harmonic" else "Subordinate"
+                        value = if (state.station.type == Station.TYPE_HARMONIC) "Harmonic" else "Subordinate"
                     )
                     MetadataRow(
                         label = "Location",
@@ -165,7 +162,7 @@ private fun DetailContent(
                             state.station.longitude
                         )
                     )
-                    if (state.station.isSubordinate() && state.station.referenceStationId != null) {
+                    if (state.station.type == Station.TYPE_SUBORDINATE && state.station.referenceStationId != null) {
                         MetadataRow(
                             label = "Reference",
                             value = state.station.referenceStationId

@@ -204,22 +204,10 @@ private fun NearbyMode(
                 )
                 Chip(
                     onClick = {
-                        try {
-                            permissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
-                        } catch (e: Exception) {
-                            // Permission request failed (common on emulators)
-                            // User should use Browse mode instead
-                            android.util.Log.e("StationPicker", "Permission request failed", e)
-                        }
+                        permissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
                     },
                     label = { Text("Grant Permission") },
                     colors = ChipDefaults.primaryChipColors()
-                )
-                Text(
-                    text = "Note: On emulator, use Browse mode",
-                    style = MaterialTheme.typography.caption2,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = 8.dp)
                 )
             }
         }

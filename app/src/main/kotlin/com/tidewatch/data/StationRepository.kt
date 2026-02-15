@@ -22,47 +22,23 @@ class StationRepository(
     private val constituentDao = database.harmonicConstituentDao()
     private val offsetDao = database.subordinateOffsetDao()
 
-    /**
-     * Get a station by ID.
-     */
-    suspend fun getStation(stationId: String): Station? {
-        return stationDao.getStationById(stationId)
-    }
+    suspend fun getStation(stationId: String): Station? =
+        stationDao.getStationById(stationId)
 
-    /**
-     * Get a station by ID as a Flow.
-     */
-    fun getStationFlow(stationId: String): Flow<Station?> {
-        return stationDao.getStationByIdFlow(stationId)
-    }
+    fun getStationFlow(stationId: String): Flow<Station?> =
+        stationDao.getStationByIdFlow(stationId)
 
-    /**
-     * Get all stations.
-     */
-    suspend fun getAllStations(): List<Station> {
-        return stationDao.getAllStations()
-    }
+    suspend fun getAllStations(): List<Station> =
+        stationDao.getAllStations()
 
-    /**
-     * Get stations by state.
-     */
-    suspend fun getStationsByState(state: String): List<Station> {
-        return stationDao.getStationsByState(state)
-    }
+    suspend fun getStationsByState(state: String): List<Station> =
+        stationDao.getStationsByState(state)
 
-    /**
-     * Get all states.
-     */
-    suspend fun getAllStates(): List<String> {
-        return stationDao.getAllStates()
-    }
+    suspend fun getAllStates(): List<String> =
+        stationDao.getAllStates()
 
-    /**
-     * Search stations by name.
-     */
-    suspend fun searchStations(query: String, limit: Int = 50): List<Station> {
-        return stationDao.searchStationsByName(query, limit)
-    }
+    suspend fun searchStations(query: String, limit: Int = 50): List<Station> =
+        stationDao.searchStationsByName(query, limit)
 
     /**
      * Find nearest stations to a location.
@@ -118,25 +94,17 @@ class StationRepository(
             .take(limit)
     }
 
-    /**
-     * Get harmonic constituents for a station.
-     */
-    suspend fun getConstituents(stationId: String): List<HarmonicConstituent> {
-        return constituentDao.getConstituentsForStation(stationId)
-    }
+    suspend fun getConstituents(stationId: String): List<HarmonicConstituent> =
+        constituentDao.getConstituentsForStation(stationId)
 
-    /**
-     * Get subordinate offset for a station.
-     */
-    suspend fun getSubordinateOffset(stationId: String): SubordinateOffset? {
-        return offsetDao.getOffsetForStation(stationId)
-    }
+    suspend fun getSubordinateOffset(stationId: String): SubordinateOffset? =
+        offsetDao.getOffsetForStation(stationId)
 
     /**
      * Get the reference station for a subordinate station.
      */
     suspend fun getReferenceStation(subordinateStation: Station): Station? {
-        if (!subordinateStation.isSubordinate()) {
+        if (subordinateStation.type != Station.TYPE_SUBORDINATE) {
             return null
         }
         val referenceId = subordinateStation.referenceStationId ?: return null

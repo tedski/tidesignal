@@ -46,13 +46,10 @@ abstract class TideDatabase : RoomDatabase() {
          * @param context Application context
          * @return TideDatabase instance
          */
-        fun getInstance(context: Context): TideDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = buildDatabase(context)
-                INSTANCE = instance
-                instance
+        fun getInstance(context: Context): TideDatabase =
+            INSTANCE ?: synchronized(this) {
+                buildDatabase(context).also { INSTANCE = it }
             }
-        }
 
         /**
          * Build the database, copying from assets if necessary.
@@ -70,7 +67,7 @@ abstract class TideDatabase : RoomDatabase() {
                 TideDatabase::class.java,
                 DATABASE_NAME
             )
-                .fallbackToDestructiveMigration() // For development; remove for production
+                .fallbackToDestructiveMigration()
                 .build()
         }
 

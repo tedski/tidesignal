@@ -29,11 +29,11 @@ fun ExtremumCard(
     modifier: Modifier = Modifier,
     useMetric: Boolean = false
 ) {
-    val color = if (extremum.isHigh()) HighTideColor else LowTideColor
-    val label = if (extremum.isHigh()) "High" else "Low"
+    val color = if (extremum.type == TideExtremum.Type.HIGH) HighTideColor else LowTideColor
+    val label = if (extremum.type == TideExtremum.Type.HIGH) "High" else "Low"
 
     Card(
-        onClick = { /* Future: Navigate to detail view */ },
+        onClick = {},
         modifier = modifier
     ) {
         Row(
@@ -43,7 +43,6 @@ fun ExtremumCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Type and time
             Column(
                 modifier = Modifier.weight(1f)
             ) {
@@ -59,7 +58,6 @@ fun ExtremumCard(
                 )
             }
 
-            // Height
             Text(
                 text = formatHeight(extremum.height, useMetric),
                 style = MaterialTheme.typography.title2,

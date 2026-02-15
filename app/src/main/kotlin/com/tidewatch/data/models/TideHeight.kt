@@ -31,19 +31,4 @@ data class TideHeight(
          */
         const val SLACK_THRESHOLD = 0.05 // ft/hr or m/hr
     }
-
-    /**
-     * Returns true if the tide is rising.
-     */
-    fun isRising(): Boolean = direction == Direction.RISING
-
-    /**
-     * Returns true if the tide is falling.
-     */
-    fun isFalling(): Boolean = direction == Direction.FALLING
-
-    /**
-     * Returns true if the tide is slack (at or near extremum).
-     */
-    fun isSlack(): Boolean = direction == Direction.SLACK
 }

@@ -47,40 +47,33 @@ fun TideGraph(
         val width = size.width
         val height = size.height
 
-        // Reserve space at bottom for time labels and on sides for height labels
         val labelHeight = 20.dp.toPx()
         val horizontalMargin = 20.dp.toPx()
         val graphHeight = height - labelHeight
         val graphWidth = width - (horizontalMargin * 2)
 
-        // Find min/max heights for scaling
         val minHeight = tideData.minOf { it.height }
         val maxHeight = tideData.maxOf { it.height }
         val heightRange = maxHeight - minHeight
 
-        if (heightRange == 0.0) return@Canvas // Avoid division by zero
+        if (heightRange == 0.0) return@Canvas
 
-        // Find time range for proper x-axis scaling
         val startTime = tideData.first().time.epochSecond
         val endTime = tideData.last().time.epochSecond
         val timeRange = (endTime - startTime).toDouble()
 
-        if (timeRange == 0.0) return@Canvas // Avoid division by zero
+        if (timeRange == 0.0) return@Canvas
 
-        // Calculate points using time-based x-positioning
         val points = tideData.map { tide ->
-            // Calculate x position based on time (offset by left margin)
             val timeOffset = (tide.time.epochSecond - startTime).toDouble()
             val x = horizontalMargin + ((timeOffset / timeRange) * graphWidth).toFloat()
 
-            // Calculate y position based on height (using graphHeight instead of height)
             val normalizedHeight = ((tide.height - minHeight) / heightRange).toFloat()
-            val y = graphHeight - (normalizedHeight * graphHeight) // Invert y-axis
+            val y = graphHeight - (normalizedHeight * graphHeight)
 
             Offset(x, y)
         }
 
-        // Draw tide curve with simple lines for debugging
         if (points.size >= 2) {
             val path = Path().apply {
                 moveTo(points[0].x, points[0].y)
@@ -96,7 +89,7 @@ fun TideGraph(
             )
         }
 
-        // Draw baseline (MLLW = 0)
+        // MLLW (Mean Lower Low Water) baseline
         val zeroY = graphHeight - ((0.0 - minHeight) / heightRange).toFloat() * graphHeight
         if (zeroY in 0f..graphHeight) {
             drawLine(
@@ -107,15 +100,13 @@ fun TideGraph(
             )
         }
 
-        // Draw time axis ticks and labels
         val startInstant = tideData.first().time
         val endInstant = tideData.last().time
         val zoneId = ZoneId.systemDefault()
         val timeFormatter = DateTimeFormatter.ofPattern("ha").withZone(zoneId)
 
-        // Calculate tick positions for every 6 hours
         val startHour = startInstant.atZone(zoneId).hour
-        val firstTickHour = ((startHour / 6) * 6) // Round down to nearest 6-hour mark
+        val firstTickHour = ((startHour / 6) * 6)
         var tickTime = startInstant.atZone(zoneId)
             .withHour(firstTickHour)
             .withMinute(0)
@@ -123,17 +114,14 @@ fun TideGraph(
             .withNano(0)
             .toInstant()
 
-        // If first tick is before start time, advance to next 6-hour mark
         if (tickTime.isBefore(startInstant)) {
             tickTime = tickTime.plusSeconds(6 * 3600)
         }
 
-        // Draw ticks every 6 hours
         while (tickTime.isBefore(endInstant) || tickTime == endInstant) {
             val timeOffset = (tickTime.epochSecond - startTime).toDouble()
             val x = horizontalMargin + ((timeOffset / timeRange) * graphWidth).toFloat()
 
-            // Draw tick mark from bottom of graph extending down
             drawLine(
                 color = Color.Gray.copy(alpha = 0.7f),
                 start = Offset(x, graphHeight),
@@ -141,7 +129,6 @@ fun TideGraph(
                 strokeWidth = 1.dp.toPx()
             )
 
-            // Draw time label below the tick mark
             val label = timeFormatter.format(tickTime).lowercase()
             drawContext.canvas.nativeCanvas.apply {
                 val paint = android.graphics.Paint().apply {
@@ -149,18 +136,15 @@ fun TideGraph(
                     textSize = 10.dp.toPx()
                     textAlign = android.graphics.Paint.Align.CENTER
                 }
-                // Position text below the graph, centered on the tick
                 drawText(label, x, graphHeight + 16.dp.toPx(), paint)
             }
 
             tickTime = tickTime.plusSeconds(6 * 3600)
         }
 
-        // Draw height axis ticks and labels (alternating sides)
         val tickInterval = calculateHeightTickInterval(heightRange)
         val firstTick = (floor(minHeight / tickInterval) * tickInterval)
 
-        // Generate tick values
         val tickValues = mutableListOf<Double>()
         var currentTick = firstTick
         while (currentTick <= maxHeight) {
@@ -168,16 +152,13 @@ fun TideGraph(
             currentTick += tickInterval
         }
 
-        // Draw height ticks and labels alternating between left and right
         tickValues.forEachIndexed { index, heightValue ->
-            // Calculate y-position using same transformation as tide curve
             val normalizedHeight = ((heightValue - minHeight) / heightRange).toFloat()
             val y = graphHeight - (normalizedHeight * graphHeight)
 
-            val isLeftSide = index % 2 == 0 // Even indices on left, odd on right
+            val isLeftSide = index % 2 == 0
 
             if (isLeftSide) {
-                // Draw tick mark on left (line extending right from left edge)
                 drawLine(
                     color = Color.Gray.copy(alpha = 0.7f),
                     start = Offset(horizontalMargin - 6.dp.toPx(), y),
@@ -185,7 +166,6 @@ fun TideGraph(
                     strokeWidth = 1.dp.toPx()
                 )
 
-                // Draw text label to the left of tick
                 val heightText = formatHeight(heightValue, useMetric)
                 drawContext.canvas.nativeCanvas.apply {
                     val leftPaint = android.graphics.Paint().apply {
@@ -202,7 +182,6 @@ fun TideGraph(
                     )
                 }
             } else {
-                // Draw tick mark on right (line extending left from right edge)
                 val rightEdge = horizontalMargin + graphWidth
                 drawLine(
                     color = Color.Gray.copy(alpha = 0.7f),
@@ -211,7 +190,6 @@ fun TideGraph(
                     strokeWidth = 1.dp.toPx()
                 )
 
-                // Draw text label to the right of tick
                 val heightText = formatHeight(heightValue, useMetric)
                 drawContext.canvas.nativeCanvas.apply {
                     val rightPaint = android.graphics.Paint().apply {

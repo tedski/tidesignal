@@ -32,14 +32,4 @@ data class Station(
         const val TYPE_HARMONIC = "harmonic"
         const val TYPE_SUBORDINATE = "subordinate"
     }
-
-    /**
-     * Returns true if this is a harmonic (primary) station.
-     */
-    fun isHarmonic(): Boolean = type == TYPE_HARMONIC
-
-    /**
-     * Returns true if this is a subordinate station.
-     */
-    fun isSubordinate(): Boolean = type == TYPE_SUBORDINATE
 }

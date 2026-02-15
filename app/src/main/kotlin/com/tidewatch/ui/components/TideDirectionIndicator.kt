@@ -55,7 +55,6 @@ fun TideDirectionIndicator(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Direction arrow
         if (icon != null) {
             Icon(
                 imageVector = icon,
@@ -66,7 +65,6 @@ fun TideDirectionIndicator(
             Spacer(modifier = Modifier.width(4.dp))
         }
 
-        // Direction label and rate
         Column(
             horizontalAlignment = Alignment.Start
         ) {
@@ -76,7 +74,6 @@ fun TideDirectionIndicator(
                 color = color
             )
 
-            // Rate of change
             val rateText = formatRate(tideHeight.rateOfChange, useMetric)
             Text(
                 text = rateText,

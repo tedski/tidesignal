@@ -20,14 +20,4 @@ data class TideExtremum(
         HIGH,
         LOW
     }
-
-    /**
-     * Returns true if this is a high tide.
-     */
-    fun isHigh(): Boolean = type == Type.HIGH
-
-    /**
-     * Returns true if this is a low tide.
-     */
-    fun isLow(): Boolean = type == Type.LOW
 }

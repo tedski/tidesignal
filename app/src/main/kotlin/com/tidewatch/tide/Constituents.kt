@@ -16,11 +16,6 @@ import kotlin.math.PI
 object Constituents {
 
     /**
-     * Angular velocity conversion factor: degrees per hour.
-     */
-    const val DEGREES_PER_HOUR = 15.0
-
-    /**
      * Represents a single tidal constituent.
      *
      * @property name Constituent identifier (e.g., "M2", "S2")
@@ -138,31 +133,17 @@ object Constituents {
     fun getConstituent(name: String): Constituent? = BY_NAME[name]
 
     /**
-     * Returns the angular velocity (speed) in radians per second for a constituent.
-     */
-    fun speedRadiansPerSecond(constituent: Constituent): Double {
-        return constituent.speed * PI / 180.0 / 3600.0
-    }
-
-    /**
-     * Returns the angular velocity (speed) in radians per hour for a constituent.
-     */
-    fun speedRadiansPerHour(constituent: Constituent): Double {
-        return constituent.speed * PI / 180.0
-    }
-
-    /**
      * Principal constituents used for basic tide prediction.
      * These 8 constituents provide ~95% accuracy for most locations.
      */
-    val PRINCIPAL: List<Constituent> = listOf(
-        BY_NAME["M2"]!!,
-        BY_NAME["S2"]!!,
-        BY_NAME["N2"]!!,
-        BY_NAME["K2"]!!,
-        BY_NAME["K1"]!!,
-        BY_NAME["O1"]!!,
-        BY_NAME["P1"]!!,
-        BY_NAME["Q1"]!!
+    val PRINCIPAL: List<Constituent> = listOfNotNull(
+        BY_NAME["M2"],
+        BY_NAME["S2"],
+        BY_NAME["N2"],
+        BY_NAME["K2"],
+        BY_NAME["K1"],
+        BY_NAME["O1"],
+        BY_NAME["P1"],
+        BY_NAME["Q1"]
     )
 }
