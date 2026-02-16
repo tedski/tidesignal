@@ -1,7 +1,7 @@
-# TideWatch ProGuard Rules
+# TideSignal ProGuard Rules
 
 # Keep data models for Room
--keep class com.tidewatch.data.models.** { *; }
+-keep class com.tidesignal.data.models.** { *; }
 
 # Keep Kotlin metadata
 -keep class kotlin.Metadata { *; }

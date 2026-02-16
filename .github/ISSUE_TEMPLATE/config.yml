@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: Documentation
-    url: https://github.com/yourusername/tidewatch/tree/main/docs
+    url: https://github.com/yourusername/tidesignal/tree/main/docs
     about: Read the project documentation for guides and technical details
   - name: NOAA Tide Data
     url: https://tidesandcurrents.noaa.gov/

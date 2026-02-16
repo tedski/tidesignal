@@ -1,4 +1,4 @@
-# TideWatch
+# TideSignal
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![WearOS](https://img.shields.io/badge/WearOS-3%2B-green.svg)](https://wearos.google.com/)
@@ -24,8 +24,8 @@
 
 1. Clone the repository and generate the tide database:
    ```bash
-   git clone https://github.com/yourusername/tidewatch.git
-   cd tidewatch/tools/data-pipeline
+   git clone https://github.com/yourusername/tidesignal.git
+   cd tidesignal/tools/data-pipeline
 
    # Install uv (recommended) or use pip
    curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -46,14 +46,14 @@ See [DEVELOPMENT.md](docs/DEVELOPMENT.md) for detailed build instructions.
 
 ### From Releases
 
-Pre-built APKs will be available in [Releases](https://github.com/yourusername/tidewatch/releases) once the app reaches stable version.
+Pre-built APKs will be available in [Releases](https://github.com/yourusername/tidesignal/releases) once the app reaches stable version.
 
 ## Quick Start
 
 1. **First Launch**: Grant location permission (optional) to find nearby stations
 2. **Select Station**: Browse by state or use "Nearby" for closest stations
 3. **View Tides**: See current tide, next high/low, and 24-hour graph
-4. **Add Tile**: Long-press watch face → Add Tile → TideWatch for glanceable info
+4. **Add Tile**: Long-press watch face → Add Tile → TideSignal for glanceable info
 
 ## Development
 
@@ -107,7 +107,7 @@ Tide predictions are based on:
 - **Public Domain**: NOAA data is US Government work
 - **API**: https://api.tidesandcurrents.noaa.gov/
 
-TideWatch is not affiliated with or endorsed by NOAA. For critical navigation or safety decisions, always consult official NOAA sources.
+TideSignal is not affiliated with or endorsed by NOAA. For critical navigation or safety decisions, always consult official NOAA sources.
 
 ## Technical Highlights
 
@@ -127,8 +127,8 @@ NOAA data is public domain. The NOAA logo and branding are not used in this app.
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/tidewatch/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/tidewatch/discussions)
+- **Issues**: [GitHub Issues](https://github.com/yourusername/tidesignal/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/tidesignal/discussions)
 - **Security**: See [SECURITY.md](SECURITY.md) for vulnerability reporting
 
 ## Acknowledgments
@@ -146,4 +146,4 @@ NOAA data is public domain. The NOAA logo and branding are not used in this app.
 
 ---
 
-**TideWatch** - Accurate tide predictions for coastal adventures
+**TideSignal** - Accurate tide predictions for coastal adventures

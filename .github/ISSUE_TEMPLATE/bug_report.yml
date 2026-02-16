@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report a bug or issue with TideWatch
+description: Report a bug or issue with TideSignal
 title: "[Bug]: "
 labels: ["bug", "triage"]
 body:
@@ -72,8 +72,8 @@ body:
   - type: input
     id: app-version
     attributes:
-      label: TideWatch Version
-      description: What version of TideWatch are you using? (Check in Settings or build output)
+      label: TideSignal Version
+      description: What version of TideSignal are you using? (Check in Settings or build output)
       placeholder: "v0.1.0 or commit hash"
     validations:
       required: false
@@ -105,7 +105,7 @@ body:
       options:
         - label: I have searched existing issues to avoid duplicates
           required: true
-        - label: I am using the latest version of TideWatch
+        - label: I am using the latest version of TideSignal
           required: false
         - label: This issue is reproducible
           required: false

@@ -1,4 +1,4 @@
-# TideWatch Data Pipeline
+# TideSignal Data Pipeline
 
 Scripts to fetch tide station data from NOAA and build the SQLite database.
 

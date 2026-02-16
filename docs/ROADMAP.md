@@ -1,10 +1,10 @@
-# TideWatch Roadmap
+# TideSignal Roadmap
 
-This document outlines the development roadmap for TideWatch, an offline-first tide prediction app for WearOS.
+This document outlines the development roadmap for TideSignal, an offline-first tide prediction app for WearOS.
 
 ## Current Status: MVP Complete
 
-The core functionality of TideWatch is complete and ready for beta testing. The app provides accurate tide predictions using NOAA harmonic analysis with a battery-efficient caching strategy.
+The core functionality of TideSignal is complete and ready for beta testing. The app provides accurate tide predictions using NOAA harmonic analysis with a battery-efficient caching strategy.
 
 ### Completed Features
 
@@ -143,7 +143,7 @@ The core functionality of TideWatch is complete and ready for beta testing. The 
 
 ## Feature Requests
 
-Track feature requests and vote on priorities in [GitHub Issues](https://github.com/yourusername/tidewatch/issues) with the "enhancement" label.
+Track feature requests and vote on priorities in [GitHub Issues](https://github.com/yourusername/tidesignal/issues) with the "enhancement" label.
 
 Top community requests:
 - Watch face complications
@@ -202,7 +202,7 @@ Priority areas for contribution:
 
 ## Versioning
 
-TideWatch follows [Semantic Versioning](https://semver.org/):
+TideSignal follows [Semantic Versioning](https://semver.org/):
 - **Major** (x.0.0): Breaking changes, major new features
 - **Minor** (1.x.0): New features, backward compatible
 - **Patch** (1.0.x): Bug fixes, minor improvements
@@ -211,5 +211,5 @@ TideWatch follows [Semantic Versioning](https://semver.org/):
 
 Have ideas for the roadmap? Open an issue or discussion on GitHub!
 
-- [Feature Requests](https://github.com/yourusername/tidewatch/issues/new?labels=enhancement)
-- [Discussions](https://github.com/yourusername/tidewatch/discussions)
+- [Feature Requests](https://github.com/yourusername/tidesignal/issues/new?labels=enhancement)
+- [Discussions](https://github.com/yourusername/tidesignal/discussions)

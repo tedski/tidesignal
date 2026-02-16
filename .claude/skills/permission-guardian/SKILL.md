@@ -1,6 +1,6 @@
 ---
 name: permission-guardian
-description: Monitor permission changes and ensure proper runtime permission handling patterns are followed in the TideWatch WearOS app
+description: Monitor permission changes and ensure proper runtime permission handling patterns are followed in the TideSignal WearOS app
 user-invocable: true
 ---
 
@@ -10,7 +10,7 @@ user-invocable: true
 
 ## Purpose
 
-Monitor permission changes and ensure proper runtime permission handling patterns are followed in the TideWatch WearOS app.
+Monitor permission changes and ensure proper runtime permission handling patterns are followed in the TideSignal WearOS app.
 
 ## Baseline Patterns (Current Codebase)
 

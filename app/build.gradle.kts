@@ -33,11 +33,11 @@ fun getVersionCodeFromTag(): Int {
 }
 
 android {
-    namespace = "com.tidewatch"
+    namespace = "com.tidesignal"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.tidewatch"
+        applicationId = "com.tidesignal"
         minSdk = 30 // WearOS 3+
         targetSdk = 34
         versionCode = getVersionCodeFromTag()

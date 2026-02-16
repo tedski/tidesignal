@@ -18,5 +18,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "TideWatch"
+rootProject.name = "TideSignal"
 include(":app")

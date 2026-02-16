@@ -1,6 +1,6 @@
-# TideWatch Documentation
+# TideSignal Documentation
 
-Welcome to the TideWatch documentation! This directory contains comprehensive guides for users, developers, and contributors.
+Welcome to the TideSignal documentation! This directory contains comprehensive guides for users, developers, and contributors.
 
 ## Quick Links
 
@@ -13,7 +13,7 @@ Welcome to the TideWatch documentation! This directory contains comprehensive gu
 
 ### For Users
 
-Currently, TideWatch is in beta testing. User documentation will be added before the v1.0 release.
+Currently, TideSignal is in beta testing. User documentation will be added before the v1.0 release.
 
 ### For Developers
 
@@ -42,7 +42,7 @@ Currently, TideWatch is in beta testing. User documentation will be added before
 
 **First-time Contributors:**
 1. Read [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines
-2. Check [GitHub Issues](https://github.com/yourusername/tidewatch/issues) for good first issues
+2. Check [GitHub Issues](https://github.com/yourusername/tidesignal/issues) for good first issues
 
 **Areas for Contribution:**
 - Testing and validation
@@ -83,7 +83,7 @@ Currently, TideWatch is in beta testing. User documentation will be added before
 ## Repository Structure
 
 ```
-tidewatch/
+tidesignal/
 ├── app/                      # Android app source code
 │   ├── src/main/kotlin/      # Kotlin source files
 │   ├── src/main/assets/      # Bundled database
@@ -127,9 +127,9 @@ tidewatch/
 
 ## Asking Questions
 
-- **General Questions**: Open a [GitHub Discussion](https://github.com/yourusername/tidewatch/discussions)
-- **Bug Reports**: Use [GitHub Issues](https://github.com/yourusername/tidewatch/issues) with bug report template
-- **Feature Requests**: Use [GitHub Issues](https://github.com/yourusername/tidewatch/issues) with feature request template
+- **General Questions**: Open a [GitHub Discussion](https://github.com/yourusername/tidesignal/discussions)
+- **Bug Reports**: Use [GitHub Issues](https://github.com/yourusername/tidesignal/issues) with bug report template
+- **Feature Requests**: Use [GitHub Issues](https://github.com/yourusername/tidesignal/issues) with feature request template
 - **Security Issues**: See [SECURITY.md](../SECURITY.md) for responsible disclosure
 
 ## Contributing to Documentation

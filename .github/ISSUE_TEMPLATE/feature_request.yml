@@ -1,5 +1,5 @@
 name: Feature Request
-description: Suggest a new feature or enhancement for TideWatch
+description: Suggest a new feature or enhancement for TideSignal
 title: "[Feature]: "
 labels: ["enhancement", "triage"]
 body:
@@ -99,7 +99,7 @@ body:
       options:
         - label: I have searched existing feature requests to avoid duplicates
           required: true
-        - label: This feature aligns with TideWatch's focus on tide prediction
+        - label: This feature aligns with TideSignal's focus on tide prediction
           required: false
         - label: I would be willing to contribute to implementing this feature
           required: false

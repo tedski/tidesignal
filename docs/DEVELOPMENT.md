@@ -1,6 +1,6 @@
-# TideWatch Development Guide
+# TideSignal Development Guide
 
-This guide provides comprehensive information for developers working on TideWatch.
+This guide provides comprehensive information for developers working on TideSignal.
 
 ## Table of Contents
 
@@ -34,8 +34,8 @@ This guide provides comprehensive information for developers working on TideWatc
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/tidewatch.git
-   cd tidewatch
+   git clone https://github.com/yourusername/tidesignal.git
+   cd tidesignal
    ```
 
 2. **Install uv** (recommended for data pipeline):
@@ -53,7 +53,7 @@ This guide provides comprehensive information for developers working on TideWatc
    ```
 
 4. **Open in Android Studio**:
-   - File > Open > Select `tidewatch` directory
+   - File > Open > Select `tidesignal` directory
    - Wait for Gradle sync to complete
 
 5. **Create WearOS emulator** (if no physical device):
@@ -71,7 +71,7 @@ This guide provides comprehensive information for developers working on TideWatc
 
 ### Java Development Kit
 
-TideWatch uses Gradle's Java Toolchain feature with the Foojay Resolver plugin to automatically detect and use the correct JDK version.
+TideSignal uses Gradle's Java Toolchain feature with the Foojay Resolver plugin to automatically detect and use the correct JDK version.
 
 **Recommended JDK**: Android Studio's bundled JDK
 - Location: `/Applications/Android Studio.app/Contents/jbr/Contents/Home` (macOS)
@@ -249,7 +249,7 @@ Run unit tests:
 ./gradlew test
 ```
 
-Unit tests are in `app/src/test/kotlin/com/tidewatch/`:
+Unit tests are in `app/src/test/kotlin/com/tidesignal/`:
 - `tide/HarmonicCalculatorTest.kt` - Tide calculation accuracy
 - `tide/AstronomicalCalculatorTest.kt` - Node factors, equilibrium arguments
 - `tide/TideCacheTest.kt` - Cache invalidation and refresh
@@ -312,7 +312,7 @@ Test stations:
 ## Code Structure
 
 ```
-app/src/main/kotlin/com/tidewatch/
+app/src/main/kotlin/com/tidesignal/
 ├── data/                          # Data layer
 │   ├── TideDatabase.kt            # Room database
 │   ├── StationRepository.kt       # CRUD operations, location search
@@ -343,7 +343,7 @@ app/src/main/kotlin/com/tidewatch/
 │       ├── Color.kt
 │       ├── Theme.kt
 │       └── Type.kt
-└── TideWatchApp.kt                # Application entry point
+└── TideSignalApp.kt                # Application entry point
 ```
 
 ### Key Modules
@@ -405,7 +405,7 @@ app/src/main/kotlin/com/tidewatch/
    @Preview(device = WearDevices.SMALL_ROUND)
    @Composable
    fun MyComponentPreview() {
-       TideWatchTheme {
+       TideSignalTheme {
            MyComponent()
        }
    }
@@ -433,7 +433,7 @@ Use Android's Log class:
 ```kotlin
 import android.util.Log
 
-private const val TAG = "TideWatch"
+private const val TAG = "TideSignal"
 
 Log.d(TAG, "Debug message")
 Log.i(TAG, "Info message")
@@ -441,7 +441,7 @@ Log.w(TAG, "Warning message")
 Log.e(TAG, "Error message", exception)
 ```
 
-Filter Logcat by tag: `tag:TideWatch`
+Filter Logcat by tag: `tag:TideSignal`
 
 ### Compose Debugging
 
@@ -517,7 +517,7 @@ Key areas for contribution:
 
 ## Additional Resources
 
-- [TideWatch Architecture](ARCHITECTURE.md) - Technical architecture details
+- [TideSignal Architecture](ARCHITECTURE.md) - Technical architecture details
 - [Data Pipeline README](../tools/data-pipeline/README.md) - Data pipeline documentation
 - [WearOS Design Guidelines](https://developer.android.com/training/wearables/design)
 - [Jetpack Compose for WearOS](https://developer.android.com/training/wearables/compose)
@@ -525,6 +525,6 @@ Key areas for contribution:
 
 ## Getting Help
 
-- **Issues**: Report bugs or request features on [GitHub Issues](https://github.com/yourusername/tidewatch/issues)
-- **Discussions**: Ask questions in [GitHub Discussions](https://github.com/yourusername/tidewatch/discussions)
+- **Issues**: Report bugs or request features on [GitHub Issues](https://github.com/yourusername/tidesignal/issues)
+- **Discussions**: Ask questions in [GitHub Discussions](https://github.com/yourusername/tidesignal/discussions)
 - **Documentation**: Check docs/ directory for detailed guides

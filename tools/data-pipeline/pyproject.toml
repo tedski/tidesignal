@@ -1,5 +1,5 @@
 [project]
-name = "tidewatch-data-pipeline"
+name = "tidesignal-data-pipeline"
 version = "0.1.0"
 description = "NOAA tide data fetcher and database builder"
 requires-python = ">=3.11"

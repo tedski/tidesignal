@@ -1,6 +1,6 @@
 ---
 name: wearos-ux-validator
-description: Validate UI/UX compliance with WearOS design guidelines and TideWatch's established patterns for optimal user experience on small circular screens
+description: Validate UI/UX compliance with WearOS design guidelines and TideSignal's established patterns for optimal user experience on small circular screens
 user-invocable: true
 ---
 
@@ -10,7 +10,7 @@ user-invocable: true
 
 ## Purpose
 
-Validate UI/UX compliance with WearOS design guidelines and TideWatch's established patterns for optimal user experience on small circular screens.
+Validate UI/UX compliance with WearOS design guidelines and TideSignal's established patterns for optimal user experience on small circular screens.
 
 ## Baseline Patterns (Current Codebase)
 
@@ -151,7 +151,7 @@ When UI code is proposed or implemented:
 
 ### ⚠️ Warnings
 - **Issue**: [Description of UX concern]
-  - **Pattern**: [Current TideWatch approach]
+  - **Pattern**: [Current TideSignal approach]
   - **Proposed**: [What's being introduced]
   - **Impact**: [User experience consequence]
   - **Recommendation**: [How to fix]
@@ -174,7 +174,7 @@ When UI code is proposed or implemented:
 
 ### ⚠️ Warnings
 - **Issue**: Missing AOD optimization
-  - **Pattern**: TideWatch supports ambient mode with reduced updates
+  - **Pattern**: TideSignal supports ambient mode with reduced updates
   - **Proposed**: Favorites list doesn't check ambientState
   - **Impact**: Full-color list shown in AOD, drains battery and looks out of place
   - **Recommendation**: Add ambient state check and simplify list in AOD (reduce colors, show fewer items)

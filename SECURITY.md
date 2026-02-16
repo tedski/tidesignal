@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-TideWatch is currently in active development. Security updates will be provided for:
+TideSignal is currently in active development. Security updates will be provided for:
 
 | Version | Supported          |
 | ------- | ------------------ |
@@ -10,7 +10,7 @@ TideWatch is currently in active development. Security updates will be provided 
 
 ## Reporting a Vulnerability
 
-We take the security of TideWatch seriously. If you discover a security vulnerability, please follow responsible disclosure practices:
+We take the security of TideSignal seriously. If you discover a security vulnerability, please follow responsible disclosure practices:
 
 ### How to Report
 
@@ -19,7 +19,7 @@ We take the security of TideWatch seriously. If you discover a security vulnerab
 Instead, please report security issues through one of these channels:
 
 1. **GitHub Security Advisories** (Preferred):
-   - Go to the [Security tab](https://github.com/yourusername/tidewatch/security/advisories)
+   - Go to the [Security tab](https://github.com/yourusername/tidesignal/security/advisories)
    - Click "Report a vulnerability"
    - Provide detailed information about the vulnerability
 
@@ -51,7 +51,7 @@ When reporting a vulnerability, please include:
 
 ## Security Considerations
 
-TideWatch is designed with security and privacy in mind:
+TideSignal is designed with security and privacy in mind:
 
 ### Data Privacy
 - **No network tracking**: The app does not send usage data, analytics, or personal information
@@ -69,7 +69,7 @@ TideWatch is designed with security and privacy in mind:
 
 ## Third-Party Dependencies
 
-TideWatch uses standard Android/WearOS libraries and dependencies managed through Gradle. We:
+TideSignal uses standard Android/WearOS libraries and dependencies managed through Gradle. We:
 
 - Keep dependencies up to date
 - Monitor security advisories for used libraries
@@ -77,7 +77,7 @@ TideWatch uses standard Android/WearOS libraries and dependencies managed throug
 
 ## Best Practices
 
-If you're contributing to TideWatch:
+If you're contributing to TideSignal:
 
 - Follow secure coding practices
 - Validate all user inputs
@@ -94,4 +94,4 @@ Security updates will be:
 - Documented in commit messages and release notes
 - Announced through GitHub releases
 
-Thank you for helping keep TideWatch secure!
+Thank you for helping keep TideSignal secure!

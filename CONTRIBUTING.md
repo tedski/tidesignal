@@ -1,6 +1,6 @@
-# Contributing to TideWatch
+# Contributing to TideSignal
 
-Thank you for your interest in contributing to TideWatch! This document provides guidelines for contributing to the project.
+Thank you for your interest in contributing to TideSignal! This document provides guidelines for contributing to the project.
 
 ## Code of Conduct
 
@@ -10,7 +10,7 @@ Be respectful and constructive. We're building a tool for the maritime community
 
 ### Reporting Bugs
 
-Use [GitHub Issues](https://github.com/yourusername/tidewatch/issues/new/choose) to report bugs using our bug report template. The template will guide you through providing:
+Use [GitHub Issues](https://github.com/yourusername/tidesignal/issues/new/choose) to report bugs using our bug report template. The template will guide you through providing:
 - Clear description and steps to reproduce
 - Expected vs actual behavior
 - Device info (watch model, WearOS version)
@@ -20,7 +20,7 @@ Use [GitHub Issues](https://github.com/yourusername/tidewatch/issues/new/choose)
 
 ### Suggesting Features
 
-Use our [feature request template](https://github.com/yourusername/tidewatch/issues/new/choose) to suggest enhancements. The template helps you describe:
+Use our [feature request template](https://github.com/yourusername/tidesignal/issues/new/choose) to suggest enhancements. The template helps you describe:
 - The problem this solves
 - Your proposed solution
 - Use cases and alternatives considered
@@ -126,7 +126,7 @@ Before contributing, review:
 
 ## Questions?
 
-Use our [question template](https://github.com/yourusername/tidewatch/issues/new?template=question.md) or start a [GitHub Discussion](https://github.com/yourusername/tidewatch/discussions). We're happy to help!
+Use our [question template](https://github.com/yourusername/tidesignal/issues/new?template=question.md) or start a [GitHub Discussion](https://github.com/yourusername/tidesignal/discussions). We're happy to help!
 
 ## License
 

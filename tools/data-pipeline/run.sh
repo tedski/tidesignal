@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run TideWatch data pipeline with uv
+# Run TideSignal data pipeline with uv
 # Supports test mode (default, 5 stations) and production mode (all 3,379 stations)
 
 set -e
@@ -26,7 +26,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         --help|-h)
             cat << EOF
-TideWatch Data Pipeline
+TideSignal Data Pipeline
 
 Usage: $0 [OPTIONS]
 
@@ -74,7 +74,7 @@ fi
 
 # Display configuration
 echo "=========================================="
-echo "TideWatch Data Pipeline"
+echo "TideSignal Data Pipeline"
 echo "=========================================="
 echo ""
 

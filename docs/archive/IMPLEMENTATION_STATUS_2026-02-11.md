@@ -1,6 +1,6 @@
-# TideWatch Implementation Status
+# TideSignal Implementation Status
 
-> **HISTORICAL DOCUMENT** - This file is archived for historical reference. For current project status, see the [Roadmap](../ROADMAP.md) or check [GitHub Issues](https://github.com/yourusername/tidewatch/issues).
+> **HISTORICAL DOCUMENT** - This file is archived for historical reference. For current project status, see the [Roadmap](../ROADMAP.md) or check [GitHub Issues](https://github.com/yourusername/tidesignal/issues).
 
 **Last Updated**: 2026-02-11
 **Overall Progress**: 14/20 tasks completed (70%)
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-The TideWatch WearOS app has been successfully scaffolded with the core calculation engine and data layer **fully implemented**. The foundation is solid and ready for UI integration and testing.
+The TideSignal WearOS app has been successfully scaffolded with the core calculation engine and data layer **fully implemented**. The foundation is solid and ready for UI integration and testing.
 
 ### What's Working
 
@@ -134,9 +134,9 @@ The TideWatch WearOS app has been successfully scaffolded with the core calculat
 ## File Structure
 
 ```
-tidewatch/
+tidesignal/
 ├── app/
-│   ├── src/main/kotlin/com/tidewatch/
+│   ├── src/main/kotlin/com/tidesignal/
 │   │   ├── data/
 │   │   │   ├── TideDatabase.kt ✅
 │   │   │   ├── StationRepository.kt ✅
@@ -173,8 +173,8 @@ tidewatch/
 │   │   │       ├── Type.kt ✅
 │   │   │       └── Theme.kt ✅
 │   │   ├── MainActivity.kt ✅
-│   │   └── TideWatchApp.kt ✅
-│   ├── src/test/kotlin/com/tidewatch/
+│   │   └── TideSignalApp.kt ✅
+│   ├── src/test/kotlin/com/tidesignal/
 │   │   └── tide/
 │   │       └── HarmonicCalculatorTest.kt ❌
 │   └── build.gradle.kts ✅
@@ -215,7 +215,7 @@ tidewatch/
 
 ### Immediate (Complete MVP)
 
-1. ✅ **Implement MainActivity and TideWatchApp** - COMPLETED
+1. ✅ **Implement MainActivity and TideSignalApp** - COMPLETED
    - App initialization
    - Database copy from assets
    - ViewModel setup

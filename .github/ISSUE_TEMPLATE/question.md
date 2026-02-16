@@ -1,6 +1,6 @@
 ---
 name: Question
-about: Ask a question about TideWatch
+about: Ask a question about TideSignal
 title: "[Question]: "
 labels: question
 assignees: ''

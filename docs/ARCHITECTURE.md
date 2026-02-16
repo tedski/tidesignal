@@ -1,10 +1,10 @@
-# TideWatch Architecture
+# TideSignal Architecture
 
-This document describes the technical architecture and implementation details of the TideWatch WearOS tide prediction app.
+This document describes the technical architecture and implementation details of the TideSignal WearOS tide prediction app.
 
 ## Overview
 
-TideWatch is built using a layered architecture with clear separation of concerns:
+TideSignal is built using a layered architecture with clear separation of concerns:
 - **UI Layer**: Jetpack Compose for WearOS screens and components
 - **Calculation Engine**: Harmonic analysis with astronomical calculations
 - **Data Layer**: Room database with bundled SQLite for offline operation
@@ -92,7 +92,7 @@ The data pipeline consists of Python scripts in `tools/data-pipeline/`:
 
 ### Harmonic Analysis
 
-TideWatch uses the standard harmonic method employed by NOAA for tide prediction. This method models tides as the sum of harmonic constituents representing different astronomical cycles.
+TideSignal uses the standard harmonic method employed by NOAA for tide prediction. This method models tides as the sum of harmonic constituents representing different astronomical cycles.
 
 **Core Formula**:
 ```
@@ -114,7 +114,7 @@ Where:
 - Long period: Mm, Mf, Ssa
 - Compound: M4, M6, MS4, etc.
 
-All constituent definitions are in `app/src/main/kotlin/com/tidewatch/tide/Constituents.kt`.
+All constituent definitions are in `app/src/main/kotlin/com/tidesignal/tide/Constituents.kt`.
 
 ### Astronomical Calculations
 
@@ -142,7 +142,7 @@ For subordinate stations (those without harmonic constituents):
 
 ## Battery Optimization Strategy
 
-TideWatch uses a hybrid caching strategy to minimize battery impact while maintaining accuracy:
+TideSignal uses a hybrid caching strategy to minimize battery impact while maintaining accuracy:
 
 ### Caching Strategy
 
@@ -211,7 +211,7 @@ TideWatch uses a hybrid caching strategy to minimize battery impact while mainta
 ## Code Structure
 
 ```
-app/src/main/kotlin/com/tidewatch/
+app/src/main/kotlin/com/tidesignal/
 ├── data/
 │   ├── TideDatabase.kt          # Room database
 │   ├── StationRepository.kt     # CRUD operations
@@ -230,7 +230,7 @@ app/src/main/kotlin/com/tidewatch/
 │   ├── tile/                    # Tile widget
 │   ├── components/              # Reusable widgets
 │   └── theme/                   # Material You theme
-└── TideWatchApp.kt              # Application entry point
+└── TideSignalApp.kt              # Application entry point
 ```
 
 ## Design Decisions

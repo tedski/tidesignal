@@ -1,0 +1,150 @@
+package com.tidesignal.data
+
+import com.tidesignal.data.models.HarmonicConstituent
+import com.tidesignal.data.models.Station
+import com.tidesignal.data.models.SubordinateOffset
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
+import kotlin.math.*
+
+/**
+ * Repository for accessing tide station data.
+ *
+ * Provides a clean API for querying stations, constituents, and offsets.
+ *
+ * @property database The TideDatabase instance
+ */
+class StationRepository(
+    private val database: TideDatabase
+) {
+    private val stationDao = database.stationDao()
+    private val constituentDao = database.harmonicConstituentDao()
+    private val offsetDao = database.subordinateOffsetDao()
+
+    suspend fun getStation(stationId: String): Station? =
+        stationDao.getStationById(stationId)
+
+    fun getStationFlow(stationId: String): Flow<Station?> =
+        stationDao.getStationByIdFlow(stationId)
+
+    suspend fun getAllStations(): List<Station> =
+        stationDao.getAllStations()
+
+    suspend fun getStationsByState(state: String): List<Station> =
+        stationDao.getStationsByState(state)
+
+    suspend fun getAllStates(): List<String> =
+        stationDao.getAllStates()
+
+    suspend fun searchStations(query: String, limit: Int = 50): List<Station> =
+        stationDao.searchStationsByName(query, limit)
+
+    /**
+     * Find nearest stations to a location.
+     *
+     * Uses great-circle distance (haversine formula).
+     * Distance calculations are CPU-intensive and run on Default dispatcher.
+     *
+     * @param latitude User latitude
+     * @param longitude User longitude
+     * @param radiusMiles Search radius in miles
+     * @param limit Maximum number of stations to return
+     * @return List of stations sorted by distance
+     */
+    suspend fun findNearestStations(
+        latitude: Double,
+        longitude: Double,
+        radiusMiles: Double = 100.0,
+        limit: Int = 10
+    ): List<StationWithDistance> = withContext(Dispatchers.Default) {
+        // Calculate bounding box for initial query
+        val latDelta = radiusMiles / 69.0 // Approximately 69 miles per degree latitude
+        val lonDelta = radiusMiles / abs(cos(Math.toRadians(latitude)) * 69.0)
+
+        val minLat = latitude - latDelta
+        val maxLat = latitude + latDelta
+        val minLon = longitude - lonDelta
+        val maxLon = longitude + lonDelta
+
+        // Get stations in bounding box
+        val stations = stationDao.getStationsInBounds(
+            minLat = minLat,
+            maxLat = maxLat,
+            minLon = minLon,
+            maxLon = maxLon,
+            centerLat = latitude,
+            centerLon = longitude,
+            limit = limit * 2 // Get more than needed for accurate sorting
+        )
+
+        // Calculate great-circle distances and sort (CPU-intensive)
+        stations
+            .map { station ->
+                StationWithDistance(
+                    station = station,
+                    distanceMiles = calculateDistance(
+                        latitude, longitude,
+                        station.latitude, station.longitude
+                    )
+                )
+            }
+            .filter { it.distanceMiles <= radiusMiles }
+            .sortedBy { it.distanceMiles }
+            .take(limit)
+    }
+
+    suspend fun getConstituents(stationId: String): List<HarmonicConstituent> =
+        constituentDao.getConstituentsForStation(stationId)
+
+    suspend fun getSubordinateOffset(stationId: String): SubordinateOffset? =
+        offsetDao.getOffsetForStation(stationId)
+
+    /**
+     * Get the reference station for a subordinate station.
+     */
+    suspend fun getReferenceStation(subordinateStation: Station): Station? {
+        if (subordinateStation.type != Station.TYPE_SUBORDINATE) {
+            return null
+        }
+        val referenceId = subordinateStation.referenceStationId ?: return null
+        return getStation(referenceId)
+    }
+
+    /**
+     * Calculate great-circle distance between two points using haversine formula.
+     *
+     * @param lat1 First point latitude
+     * @param lon1 First point longitude
+     * @param lat2 Second point latitude
+     * @param lon2 Second point longitude
+     * @return Distance in miles
+     */
+    private fun calculateDistance(
+        lat1: Double,
+        lon1: Double,
+        lat2: Double,
+        lon2: Double
+    ): Double {
+        val earthRadiusMiles = 3958.8
+
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLon = Math.toRadians(lon2 - lon1)
+
+        val a = sin(dLat / 2).pow(2) +
+                cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) *
+                sin(dLon / 2).pow(2)
+
+        val c = 2 * asin(sqrt(a))
+
+        return earthRadiusMiles * c
+    }
+
+    /**
+     * Station with calculated distance from a reference point.
+     */
+    data class StationWithDistance(
+        val station: Station,
+        val distanceMiles: Double
+    )
+}

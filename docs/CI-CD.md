@@ -1,10 +1,10 @@
-# TideWatch CI/CD Setup Guide
+# TideSignal CI/CD Setup Guide
 
 This guide explains the CI/CD infrastructure for automated testing and deployment to Google Play.
 
 ## Overview
 
-TideWatch uses GitHub Actions to automate:
+TideSignal uses GitHub Actions to automate:
 - **Testing & Quality**: Unit tests, lint checks on every PR and push
 - **Deployment**: Build signed APKs and upload to Google Play Internal Testing track
 - **Version Management**: Extract versions from git tags (e.g., `v1.2.3`)
@@ -72,14 +72,14 @@ Generate the keystore locally (only once):
 
 ```bash
 keytool -genkeypair -v \
-  -keystore tidewatch-upload.keystore \
-  -alias tidewatch \
+  -keystore tidesignal-upload.keystore \
+  -alias tidesignal \
   -keyalg RSA \
   -keysize 2048 \
   -validity 10000 \
   -storepass <STRONG_PASSWORD> \
   -keypass <STRONG_PASSWORD> \
-  -dname "CN=TideWatch, OU=Development, O=TideWatch, L=San Francisco, ST=CA, C=US"
+  -dname "CN=TideSignal, OU=Development, O=TideSignal, L=San Francisco, ST=CA, C=US"
 ```
 
 **Important**: Save the passwords securely!
@@ -88,8 +88,8 @@ keytool -genkeypair -v \
 
 ```bash
 keytool -export -rfc \
-  -keystore tidewatch-upload.keystore \
-  -alias tidewatch \
+  -keystore tidesignal-upload.keystore \
+  -alias tidesignal \
   -file upload_certificate.pem
 ```
 
@@ -98,7 +98,7 @@ Upload `upload_certificate.pem` to Google Play Console (in App Signing setup).
 #### Encode for GitHub Secrets
 
 ```bash
-base64 -i tidewatch-upload.keystore | pbcopy
+base64 -i tidesignal-upload.keystore | pbcopy
 ```
 
 ### 3. Configure GitHub Secrets
@@ -108,7 +108,7 @@ Repository → Settings → Secrets and variables → Actions
 Add these secrets:
 - `KEYSTORE_BASE64`: Base64-encoded keystore file (from `pbcopy` above)
 - `KEYSTORE_PASSWORD`: Keystore store password
-- `KEY_ALIAS`: Key alias (typically `tidewatch`)
+- `KEY_ALIAS`: Key alias (typically `tidesignal`)
 - `KEY_PASSWORD`: Key password (same as store password)
 - `PLAY_CONSOLE_SERVICE_ACCOUNT_JSON`: Full JSON contents of service account key
 
@@ -277,7 +277,7 @@ git push origin v1.0.0
 1. Verify `KEYSTORE_BASE64` secret is set correctly
 2. Ensure base64 encoding was done correctly:
    ```bash
-   base64 -i tidewatch-upload.keystore > keystore.txt
+   base64 -i tidesignal-upload.keystore > keystore.txt
    # Copy contents of keystore.txt to GitHub secret
    ```
 

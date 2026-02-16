@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**TideWatch** is an offline-first WearOS tide prediction app using harmonic analysis of NOAA data.
+**TideSignal** is an offline-first WearOS tide prediction app using harmonic analysis of NOAA data.
 
 **Status**: Core functionality complete, main UI screens implemented, tile widget and AOD remaining
 **Language**: Kotlin
@@ -15,18 +15,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Core Components
 
-1. **Data Layer** (`app/src/main/kotlin/com/tidewatch/data/`)
+1. **Data Layer** (`app/src/main/kotlin/com/tidesignal/data/`)
    - `TideDatabase.kt` - Room database (stations, constituents, offsets)
    - `StationRepository.kt` - CRUD operations, location-based search
    - `models/` - Data classes (Station, HarmonicConstituent, TideExtremum, etc.)
 
-2. **Calculation Engine** (`app/src/main/kotlin/com/tidewatch/tide/`)
+2. **Calculation Engine** (`app/src/main/kotlin/com/tidesignal/tide/`)
    - `Constituents.kt` - 37 NOAA tidal constituent definitions
    - `AstronomicalCalculator.kt` - Node factors, equilibrium arguments
    - `HarmonicCalculator.kt` - Core tide prediction (h = Σ[A×f×cos(ω×t+φ-κ)])
    - `TideCache.kt` - 7-day extrema pre-computation for battery efficiency
 
-3. **UI Layer** (`app/src/main/kotlin/com/tidewatch/ui/`)
+3. **UI Layer** (`app/src/main/kotlin/com/tidesignal/ui/`)
    - `theme/` - Material You colors, typography, AOD support
    - `components/` - Reusable widgets (TideGraph, DirectionIndicator, ExtremumCard, etc.)
    - `app/` - Main screens (TideMainScreen, StationPickerScreen, navigation)

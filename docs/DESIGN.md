@@ -1,10 +1,10 @@
-# TideWatch - Design Specification
+# TideSignal - Design Specification
 
-> **Original Design Document** - This is the comprehensive design specification and Product Requirements Document (PRD) for TideWatch. It serves as the authoritative reference for the project's architecture, features, and technical decisions. For a high-level overview, see [README.md](../README.md). For architectural details, see [ARCHITECTURE.md](ARCHITECTURE.md).
+> **Original Design Document** - This is the comprehensive design specification and Product Requirements Document (PRD) for TideSignal. It serves as the authoritative reference for the project's architecture, features, and technical decisions. For a high-level overview, see [README.md](../README.md). For architectural details, see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Project Overview
 
-TideWatch is an offline-first, privacy-focused tide prediction app for WearOS smartwatches, designed for fishing and coastal use. The app performs real-time harmonic analysis using NOAA station data to predict tides without any network dependency after installation.
+TideSignal is an offline-first, privacy-focused tide prediction app for WearOS smartwatches, designed for fishing and coastal use. The app performs real-time harmonic analysis using NOAA station data to predict tides without any network dependency after installation.
 
 **Target Timeline:** MVP in 3-5 days
 
@@ -281,12 +281,12 @@ Where:
 
 ### Project Structure
 ```
-tidewatch/
+tidesignal/
 ├── app/
 │   ├── src/
 │   │   ├── main/
 │   │   │   ├── kotlin/
-│   │   │   │   ├── com/tidewatch/
+│   │   │   │   ├── com/tidesignal/
 │   │   │   │   │   ├── data/
 │   │   │   │   │   │   ├── StationRepository.kt
 │   │   │   │   │   │   ├── TideDatabase.kt
@@ -301,13 +301,13 @@ tidewatch/
 │   │   │   │   │   │   ├── tile/
 │   │   │   │   │   │   ├── components/
 │   │   │   │   │   │   └── theme/
-│   │   │   │   │   └── TideWatchApp.kt
+│   │   │   │   │   └── TideSignalApp.kt
 │   │   │   ├── assets/
 │   │   │   │   └── tides.db (SQLite database)
 │   │   │   └── res/
 │   │   └── test/
 │   │       └── kotlin/
-│   │           └── com/tidewatch/
+│   │           └── com/tidesignal/
 │   │               ├── tide/
 │   │               │   ├── HarmonicCalculatorTest.kt
 │   │               │   └── validation/
@@ -385,11 +385,11 @@ tidewatch/
 **build.gradle.kts** (app module):
 ```kotlin
 android {
-    namespace = "com.tidewatch"
+    namespace = "com.tidesignal"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.tidewatch"
+        applicationId = "com.tidesignal"
         minSdk = 30 // WearOS 3+
         targetSdk = 34
         versionCode = 1

@@ -1,6 +1,6 @@
 ---
 name: battery-sentinel
-description: Evaluate battery impact of proposed features to maintain the strict <2% per hour target for the TideWatch WearOS app
+description: Evaluate battery impact of proposed features to maintain the strict <2% per hour target for the TideSignal WearOS app
 user-invocable: true
 ---
 
@@ -10,7 +10,7 @@ user-invocable: true
 
 ## Purpose
 
-Evaluate battery impact of proposed features to maintain the strict <2% per hour target for the TideWatch WearOS app.
+Evaluate battery impact of proposed features to maintain the strict <2% per hour target for the TideSignal WearOS app.
 
 ## Baseline Patterns (Current Codebase)
 
